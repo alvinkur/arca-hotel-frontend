@@ -4,6 +4,13 @@ import { submitBooking } from '../services/api';
 
 // Component: BookingForm
 export default function BookingForm({ selectedRoom, focusTrigger }) {
+  // Hitung tanggal hari ini dalam format lokal YYYY-MM-DD
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const todayStr = `${year}-${month}-${day}`;
+
   // useState() - Menyimpan data input booking form
   const [formData, setFormData] = useState({
     guestName: '',
@@ -61,11 +68,6 @@ export default function BookingForm({ selectedRoom, focusTrigger }) {
   // Validasi sederhana form booking
   const validateForm = () => {
     const newErrors = {};
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const todayStr = `${year}-${month}-${day}`;
 
     if (!formData.guestName.trim()) {
       newErrors.guestName = 'Nama tamu wajib diisi.';
@@ -241,6 +243,7 @@ export default function BookingForm({ selectedRoom, focusTrigger }) {
                 onChange={handleChange}
                 className={`booking-input ${errors.checkIn ? 'invalid' : ''}`}
                 required
+                min={todayStr}
               />
               {errors.checkIn && (
                 <span className="validation-error">{errors.checkIn}</span>
@@ -260,6 +263,7 @@ export default function BookingForm({ selectedRoom, focusTrigger }) {
                 onChange={handleChange}
                 className={`booking-input ${errors.checkOut ? 'invalid' : ''}`}
                 required
+                min={formData.checkIn || todayStr}
               />
               {errors.checkOut && (
                 <span className="validation-error">{errors.checkOut}</span>
