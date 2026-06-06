@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { FaHeart, FaRegHeart, FaWifi, FaCoffee, FaTv, FaBath } from 'react-icons/fa';
 

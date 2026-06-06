@@ -28,3 +28,9 @@ dist-ssr
 .env.[a-zA-Z0-9]*
 .env*.local
 *.env
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+

@@ -1,39 +1,33 @@
 import React from 'react';
-import { FaSwimmingPool, FaSpa, FaUtensils, FaUmbrellaBeach, FaWifi } from 'react-icons/fa';
+import { FaWifi, FaHotel, FaMapMarkerAlt, FaCoffee } from 'react-icons/fa';
 
 // Component: Facilities
 export default function Facilities() {
   // Array data fasilitas hotel
   const facilitiesList = [
     {
-      name: "Infinity Pool",
-      localName: "Kolam Renang",
-      desc: "Our stunning main infinity pool overlooking the turquoise ocean of Lombok. Complete with daybeds and poolside bar services.",
-      icon: <FaSwimmingPool />
-    },
-    {
-      name: "The Arca Spa & Wellness",
-      localName: "Spa & Pusat Kebugaran",
-      desc: "Indulge in authentic traditional Sasak massages and modern therapeutic body treatments designed to restore body and mind.",
-      icon: <FaSpa />
-    },
-    {
-      name: "Segara Restaurant",
-      localName: "Restoran",
-      desc: "A premium open-air dining venue offering fresh local catches, traditional Indonesian dishes, and international gastronomy.",
-      icon: <FaUtensils />
-    },
-    {
-      name: "Beach Access",
-      localName: "Akses Pantai Pribadi",
-      desc: "Step directly onto the pristine, warm white sands of Lombok beach with dedicated guest services and seaside lounge spaces.",
-      icon: <FaUmbrellaBeach />
-    },
-    {
       name: "Free WiFi",
       localName: "Koneksi WiFi Gratis",
       desc: "Stay connected anywhere across the resort grounds with high-speed fiber-optic internet connectivity.",
       icon: <FaWifi />
+    },
+    {
+      name: "Comfortable Lobby",
+      localName: "Lobi yang Nyaman",
+      desc: "Relax in our spacious, elegantly designed lobby equipped with cozy premium seating and warm Sasak hospitality.",
+      icon: <FaHotel />
+    },
+    {
+      name: "Close to City Center",
+      localName: "Dekat dengan Pusat Kota",
+      desc: "Strategically located near the heart of the city, giving you convenient access to local shopping, dining, and landmarks.",
+      icon: <FaMapMarkerAlt />
+    },
+    {
+      name: "Free Welcome Drink",
+      localName: "Gratis Minuman Pilihan",
+      desc: "Complimentary refreshment of your choice upon arrival and during your stay. Choose between fresh mineral water or premium coffee.",
+      icon: <FaCoffee />
     }
   ];
 

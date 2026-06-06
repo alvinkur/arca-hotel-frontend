@@ -1,7 +1,6 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
-import lobbyImg from '../assets/lobby_resort.png';
-import poolImg from '../assets/beach_pool.png';
-import coastImg from '../assets/sunset_coast.png';
 
 // Component: Hero Section
 export default function Hero({ onBookNowClick }) {
@@ -14,22 +13,22 @@ export default function Hero({ onBookNowClick }) {
   // Array data gambar untuk slideshow
   const slides = [
     {
-      image: lobbyImg,
-      title: "Welcome to Hotel Arca Lombok",
-      tagline: "Serenity meets luxury",
-      subtitle: "Experience the ultimate sanctuary of premium beachfront living, warm Lombok hospitality, and state-of-the-art comfort."
+      image: "/assets/lobby.jpg",
+      title: "Welcome to Hotel Arca",
+      tagline: "Warm Sasak Hospitality",
+      subtitle: "Experience the ultimate sanctuary of premium living, authentic Sasak hospitality, and state-of-the-art comfort."
     },
     {
-      image: poolImg,
-      title: "Indulge in Paradise",
-      tagline: "Turquoise Horizons",
-      subtitle: "Unwind by our gorgeous signature infinity pool blending seamlessly with the crystal clear waters of Lombok's ocean."
+      image: "/assets/tempat_duduk_loby.jpg",
+      title: "Elegant Lounge Spaces",
+      tagline: "Comfort & Style",
+      subtitle: "Relax in our beautifully designed seating areas, perfect for casual gatherings and peaceful moments."
     },
     {
-      image: coastImg,
-      title: "Captivating Sunsets",
-      tagline: "A Nature Masterpiece",
-      subtitle: "Watch the sun dip below the volcanic peaks as the sea turns into a canvas of golden hues, straight from your private balcony."
+      image: "/assets/vip_tv.jpg",
+      title: "Premium Suite Comforts",
+      tagline: "Modern Luxury",
+      subtitle: "Unwind in our rooms equipped with high-definition smart entertainment systems and custom interiors."
     }
   ];
 

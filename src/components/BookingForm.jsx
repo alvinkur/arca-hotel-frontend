@@ -1,9 +1,14 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
-import { FaUser, FaCalendarAlt, FaUsers, FaBed, FaCheckCircle, FaSpinner } from 'react-icons/fa';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { FaUser, FaCalendarAlt, FaUsers, FaBed, FaCheckCircle, FaSpinner, FaCoffee, FaLock, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
 import { submitBooking } from '../services/api';
 
 // Component: BookingForm
 export default function BookingForm({ selectedRoom, focusTrigger }) {
+  const router = useRouter();
   // Hitung tanggal hari ini dalam format lokal YYYY-MM-DD
   const today = new Date();
   const year = today.getFullYear();
@@ -14,10 +19,13 @@ export default function BookingForm({ selectedRoom, focusTrigger }) {
   // useState() - Menyimpan data input booking form
   const [formData, setFormData] = useState({
     guestName: '',
+    phoneNumber: '',
+    domicile: '',
     checkIn: '',
     checkOut: '',
     guestsCount: 1,
-    roomType: ''
+    roomType: '',
+    welcomeDrink: 'Air Putih'
   });
 
   // useState() - Menyimpan errors hasil validasi input
@@ -52,16 +60,38 @@ export default function BookingForm({ selectedRoom, focusTrigger }) {
     }
   }, [focusTrigger]);
 
+  const [currentUser, setCurrentUser] = useState(null);
+
+  // Load user session and prefill guestName
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userStr = localStorage.getItem('currentUser');
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        setCurrentUser(user);
+        setFormData(prev => ({ ...prev, guestName: user.name }));
+      }
+    }
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => {
+      const updated = { ...prev, [name]: value };
+      // Jika check-in berubah dan check-out sudah dipilih tapi tidak valid, reset check-out
+      if (name === 'checkIn' && prev.checkOut && value >= prev.checkOut) {
+        updated.checkOut = '';
+      }
+      return updated;
+    });
 
     // Hapus error untuk input tertentu saat user sedang mengetik
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+    // Hapus error checkout juga saat check-in berubah
+    if (name === 'checkIn' && errors.checkOut) {
+      setErrors(prev => ({ ...prev, checkOut: '' }));
     }
   };
 
@@ -73,6 +103,16 @@ export default function BookingForm({ selectedRoom, focusTrigger }) {
       newErrors.guestName = 'Nama tamu wajib diisi.';
     } else if (formData.guestName.trim().length < 3) {
       newErrors.guestName = 'Nama minimal terdiri dari 3 karakter.';
+    }
+
+    if (!formData.phoneNumber.trim()) {
+      newErrors.phoneNumber = 'Nomor telepon wajib diisi.';
+    } else if (!/^[0-9+\-\s]{8,15}$/.test(formData.phoneNumber.trim())) {
+      newErrors.phoneNumber = 'Format nomor telepon tidak valid.';
+    }
+
+    if (!formData.domicile.trim()) {
+      newErrors.domicile = 'Domisili asal wajib diisi.';
     }
 
     if (!formData.checkIn) {
@@ -117,13 +157,28 @@ export default function BookingForm({ selectedRoom, focusTrigger }) {
         const date2 = new Date(formData.checkOut);
         const diffTime = Math.abs(date2 - date1);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const bookingCode = 'ARC-' + Math.floor(100000 + Math.random() * 900000);
 
-        setBookingSummary({
-          ...formData,
-          nights: diffDays,
-          bookingCode: 'ARC-' + Math.floor(100000 + Math.random() * 900000)
-        });
-        setIsSubmitted(true);
+        // Simpan booking ke localStorage dengan status Awaiting Payment
+        if (typeof window !== 'undefined') {
+          const currentBookings = JSON.parse(localStorage.getItem('hotel_bookings') || '[]');
+
+          const newBooking = {
+            ...formData,
+            nights: diffDays,
+            bookingCode,
+            totalRevenue: 0,
+            paymentStatus: 'Awaiting Payment',
+            paymentMethod: '',
+            status: 'Awaiting Payment',
+            createdAt: new Date().toISOString()
+          };
+          currentBookings.push(newBooking);
+          localStorage.setItem('hotel_bookings', JSON.stringify(currentBookings));
+
+          // Redirect ke halaman payment
+          router.push(`/payment?code=${bookingCode}`);
+        }
       } catch (err) {
         setSubmitError('Gagal mengirim pemesanan ke server. Silakan coba kembali.');
       } finally {
@@ -134,11 +189,14 @@ export default function BookingForm({ selectedRoom, focusTrigger }) {
 
   const handleReset = () => {
     setFormData({
-      guestName: '',
+      guestName: currentUser ? currentUser.name : '',
+      phoneNumber: '',
+      domicile: '',
       checkIn: '',
       checkOut: '',
       guestsCount: 1,
-      roomType: ''
+      roomType: '',
+      welcomeDrink: 'Air Putih'
     });
     setErrors({});
     setIsSubmitted(false);
@@ -158,7 +216,7 @@ export default function BookingForm({ selectedRoom, focusTrigger }) {
         <h2 className="section-title">Reservation Form</h2>
         <div className="gold-divider"></div>
         <p className="section-subtitle">
-          Book your dream stay at Hotel Arca Lombok. Fill in the details below to secure your booking.
+          Book your dream stay at Hotel Arca. Fill in the details below to secure your booking.
         </p>
 
         {isSubmitted && bookingSummary ? (
@@ -193,6 +251,18 @@ export default function BookingForm({ selectedRoom, focusTrigger }) {
                 <span>Guests:</span>
                 <strong>{bookingSummary.guestsCount} Person(s)</strong>
               </div>
+              <div className="booking-summary-row">
+                <span>Phone:</span>
+                <strong>{bookingSummary.phoneNumber}</strong>
+              </div>
+              <div className="booking-summary-row">
+                <span>Domicile:</span>
+                <strong>{bookingSummary.domicile}</strong>
+              </div>
+              <div className="booking-summary-row">
+                <span>Welcome Drink Request:</span>
+                <strong>{bookingSummary.welcomeDrink}</strong>
+              </div>
             </div>
 
             <p style={{ fontSize: '0.85rem', color: 'var(--color-text-light)', marginBottom: '24px' }}>
@@ -202,6 +272,18 @@ export default function BookingForm({ selectedRoom, focusTrigger }) {
             <button onClick={handleReset} className="btn-gold">
               Book Another Room
             </button>
+          </div>
+        ) : !currentUser ? (
+          /* Login Wall if not logged in */
+          <div className="login-prompt-container" style={{ textAlign: 'center', padding: '40px 20px' }}>
+            <FaLock size={45} style={{ color: 'var(--color-gold)', marginBottom: '16px' }} />
+            <h3 style={{ fontFamily: 'var(--font-title)', color: 'var(--color-blue-deep)', fontSize: '1.6rem', marginBottom: '12px' }}>Login Diperlukan</h3>
+            <p style={{ color: 'var(--color-text-light)', marginBottom: '24px', maxWidth: '400px', margin: '0 auto 24px auto', fontSize: '0.95rem' }}>
+              Silakan login atau daftarkan akun Anda terlebih dahulu untuk melakukan reservasi kamar di Hotel Arca.
+            </p>
+            <Link href="/login" className="btn-gold" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              Login / Register Sekarang
+            </Link>
           </div>
         ) : (
           /* Form Input Booking */
@@ -223,10 +305,54 @@ export default function BookingForm({ selectedRoom, focusTrigger }) {
                 className={`booking-input ${errors.guestName ? 'invalid' : ''}`}
                 required
                 maxLength={100}
-                autocomplete="name"
+                autoComplete="name"
               />
               {errors.guestName && (
                 <span className="validation-error">{errors.guestName}</span>
+              )}
+            </div>
+
+            {/* Input: Nomor Telepon */}
+            <div>
+              <label htmlFor="phoneNumber" className="booking-label">
+                <FaPhone style={{ marginRight: '6px' }} /> Nomor Telepon
+              </label>
+              <input
+                type="tel"
+                id="phoneNumber"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                placeholder="Contoh: 08123456789"
+                className={`booking-input ${errors.phoneNumber ? 'invalid' : ''}`}
+                required
+                maxLength={15}
+                autoComplete="tel"
+              />
+              {errors.phoneNumber && (
+                <span className="validation-error">{errors.phoneNumber}</span>
+              )}
+            </div>
+
+            {/* Input: Domisili Asal */}
+            <div>
+              <label htmlFor="domicile" className="booking-label">
+                <FaMapMarkerAlt style={{ marginRight: '6px' }} /> Domisili Asal
+              </label>
+              <input
+                type="text"
+                id="domicile"
+                name="domicile"
+                value={formData.domicile}
+                onChange={handleChange}
+                placeholder="Contoh: Jakarta, Surabaya, Bandung"
+                className={`booking-input ${errors.domicile ? 'invalid' : ''}`}
+                required
+                maxLength={100}
+                autoComplete="address-level2"
+              />
+              {errors.domicile && (
+                <span className="validation-error">{errors.domicile}</span>
               )}
             </div>
 
@@ -263,7 +389,17 @@ export default function BookingForm({ selectedRoom, focusTrigger }) {
                 onChange={handleChange}
                 className={`booking-input ${errors.checkOut ? 'invalid' : ''}`}
                 required
-                min={formData.checkIn || todayStr}
+                min={(() => {
+                  if (!formData.checkIn) return todayStr;
+                  const d = new Date(formData.checkIn);
+                  if (isNaN(d.getTime())) return todayStr;
+                  d.setDate(d.getDate() + 1);
+                  try {
+                    return d.toISOString().split('T')[0];
+                  } catch (e) {
+                    return todayStr;
+                  }
+                })()}
               />
               {errors.checkOut && (
                 <span className="validation-error">{errors.checkOut}</span>
@@ -285,7 +421,7 @@ export default function BookingForm({ selectedRoom, focusTrigger }) {
                 onChange={handleChange}
                 className={`booking-input ${errors.guestsCount ? 'invalid' : ''}`}
                 required
-                inputmode="numeric"
+                inputMode="numeric"
               />
               {errors.guestsCount && (
                 <span className="validation-error">{errors.guestsCount}</span>
@@ -306,14 +442,31 @@ export default function BookingForm({ selectedRoom, focusTrigger }) {
                 required
               >
                 <option value="">-- Pilih Tipe Kamar --</option>
-                <option value="Deluxe Room">Deluxe Room</option>
-                <option value="Ocean View Suite">Ocean View Suite</option>
-                <option value="Family Room">Family Room</option>
-                <option value="Private Villa">Private Villa</option>
+                <option value="Economy Room">Economy Room</option>
+                <option value="Standard Room">Standard Room</option>
+                <option value="VIP Suite">VIP Suite</option>
               </select>
               {errors.roomType && (
                 <span className="validation-error">{errors.roomType}</span>
               )}
+            </div>
+
+            {/* Input: Welcome Drink Request */}
+            <div>
+              <label htmlFor="welcomeDrink" className="booking-label">
+                <FaCoffee style={{ marginRight: '6px' }} /> Permintaan Welcome Drink (Free)
+              </label>
+              <select
+                id="welcomeDrink"
+                name="welcomeDrink"
+                value={formData.welcomeDrink}
+                onChange={handleChange}
+                className="booking-select"
+                required
+              >
+                <option value="Air Putih">Air Putih (Mineral Water)</option>
+                <option value="Kopi">Kopi (Coffee)</option>
+              </select>
             </div>
 
             {/* Error Message jika API gagal */}
