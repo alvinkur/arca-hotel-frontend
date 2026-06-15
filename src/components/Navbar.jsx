@@ -89,6 +89,9 @@ export default function Navbar({ onBookingClick }) {
         <Link href="/#booking" className="navbar-link" onClick={closeMobileMenu}>
           Booking
         </Link>
+        <Link href="/booking-status" className="navbar-link" onClick={closeMobileMenu}>
+          Cek Booking
+        </Link>
         
         {currentUser ? (
           <>

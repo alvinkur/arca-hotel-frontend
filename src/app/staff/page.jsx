@@ -2,775 +2,594 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { 
-  FaArrowLeft, 
-  FaBed, 
-  FaCalendarAlt, 
-  FaCoffee, 
-  FaUser,
-  FaCheckCircle,
-  FaLock,
-  FaSignOutAlt,
-  FaCheck,
-  FaTrash
+import {
+  FaBed, FaCalendarAlt, FaUser, FaCheckCircle, FaLock,
+  FaSignOutAlt, FaCheck, FaTrash, FaTachometerAlt, FaListAlt,
+  FaCog, FaHome, FaTicketAlt, FaMoneyBillWave, FaClipboardList,
+  FaDoorOpen
 } from 'react-icons/fa';
 
 const DEFAULT_ROOMS = [
-  {
-    id: 1,
-    name: "Economy Room",
-    price: 150000,
-    description: "Perfect for budget-conscious travelers. Cozy layout with basic facilities, comfortable bed, and pleasant surroundings.",
-    image: "/assets/ekonomi_room.jpg",
-    amenities: ["Free WiFi", "Smart TV"]
-  },
-  {
-    id: 2,
-    name: "Standard Room",
-    price: 150000,
-    description: "A blend of comfort and style. Equipped with premium bedding, modern utilities, and a refreshing garden view balcony.",
-    image: "/assets/standart_room.jpg",
-    amenities: ["Free WiFi", "Breakfast", "Smart TV"]
-  },
-  {
-    id: 3,
-    name: "VIP Suite",
-    price: 250000,
-    description: "Experience absolute luxury. Spaciously designed with high-end furniture, private lounge, premium entertainment, and premium comfort.",
-    image: "/assets/vip_room.jpg",
-    amenities: ["Free WiFi", "Breakfast", "Smart TV"]
-  }
+  { id: 1,  roomNumber: "101", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
+  { id: 2,  roomNumber: "102", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
+  { id: 3,  roomNumber: "103", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
+  { id: 4,  roomNumber: "104", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
+  { id: 5,  roomNumber: "105", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
+  { id: 6,  roomNumber: "106", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
+  { id: 7,  roomNumber: "107", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
+  { id: 8,  roomNumber: "108", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
+  { id: 9,  roomNumber: "109", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
+  { id: 10, roomNumber: "110", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
+  { id: 11, roomNumber: "111", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
+  { id: 12, roomNumber: "112", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
+  { id: 13, roomNumber: "113", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
+  { id: 14, roomNumber: "114", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
+  { id: 15, roomNumber: "201", name: "VIP Suite", price: 350000, floor: 2, description: "Luxury suite with private lounge.", image: "/assets/vip_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV","Private Lounge"] },
+  { id: 16, roomNumber: "202", name: "VIP Suite", price: 350000, floor: 2, description: "Luxury suite with private lounge.", image: "/assets/vip_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV","Private Lounge"] },
+  { id: 17, roomNumber: "203", name: "VIP Suite", price: 350000, floor: 2, description: "Luxury suite with private lounge.", image: "/assets/vip_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV","Private Lounge"] },
+  { id: 18, roomNumber: "204", name: "VIP Suite", price: 350000, floor: 2, description: "Luxury suite with private lounge.", image: "/assets/vip_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV","Private Lounge"] },
 ];
 
 export default function StaffDashboardPage() {
-  const [rooms, setRooms] = useState([]);
-  const [bookings, setBookings] = useState([]);
+  const [rooms, setRooms]           = useState([]);
+  const [bookings, setBookings]     = useState([]);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [activeTab, setActiveTab] = useState('rooms'); // 'rooms' or 'bookings'
+  const [activeNav, setActiveNav]   = useState('dashboard');
+  const [currentUser, setCurrentUser] = useState(null);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType]   = useState('success');
 
-  // Load data & verify authorization
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const currentUserStr = localStorage.getItem('currentUser');
-      if (currentUserStr) {
-        const currentUser = JSON.parse(currentUserStr);
-        if (currentUser.role === 'staff' || currentUser.email === 'staff@arca.com') {
-          setIsAuthorized(true);
-
-          // Load rooms
-          const storedRooms = localStorage.getItem('hotel_rooms');
-          let parsed = [];
-          try {
-            parsed = storedRooms ? JSON.parse(storedRooms) : [];
-          } catch (e) {}
-
-          const hasStandard = parsed.some(r => r.name === 'Standard Room');
-          const hasDeluxe = parsed.some(r => r.name === 'Deluxe Room');
-
-          if (!storedRooms || parsed.length === 0 || !hasStandard || hasDeluxe) {
-            localStorage.setItem('hotel_rooms', JSON.stringify(DEFAULT_ROOMS));
-            setRooms(DEFAULT_ROOMS);
-          } else {
-            setRooms(parsed);
-          }
-
-          // Load bookings
-          const storedBookings = localStorage.getItem('hotel_bookings');
-          if (storedBookings) {
-            setBookings(JSON.parse(storedBookings));
-          }
+    if (typeof window === 'undefined') return;
+    const userStr = localStorage.getItem('currentUser');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      setCurrentUser(user);
+      if (user.role === 'staff' || user.email === 'staff@arca.com') {
+        setIsAuthorized(true);
+        // Seed / migrate rooms to 18-room format
+        let stored = [];
+        try { stored = JSON.parse(localStorage.getItem('hotel_rooms') || '[]'); } catch(e) {}
+        const needsMigration = stored.some(r => r.floor === 3 || r.roomNumber === '301');
+        if (stored.length < 10 || needsMigration) {
+          localStorage.setItem('hotel_rooms', JSON.stringify(DEFAULT_ROOMS));
+          setRooms(DEFAULT_ROOMS);
+        } else {
+          setRooms(stored);
         }
+        // Load bookings
+        let bk = [];
+        try { bk = JSON.parse(localStorage.getItem('hotel_bookings') || '[]'); } catch(e) {}
+        setBookings(bk);
       }
-      setCheckingAuth(false);
     }
+    setCheckingAuth(false);
+
+    // Listen to localStorage changes in real time
+    const handleStorageChange = () => {
+      let bk = [];
+      try { bk = JSON.parse(localStorage.getItem('hotel_bookings') || '[]'); } catch(e) {}
+      setBookings(bk);
+      let rm = [];
+      try { rm = JSON.parse(localStorage.getItem('hotel_rooms') || '[]'); } catch(e) {}
+      if (rm.length > 0) setRooms(rm);
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('currentUser');
-    window.location.href = '/staff/login';
+  const reloadBookings = () => {
+    let bk = [];
+    try { bk = JSON.parse(localStorage.getItem('hotel_bookings') || '[]'); } catch(e) {}
+    setBookings(bk);
   };
 
-  const [toastMessage, setToastMessage] = useState('');
-
-  const showToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage('');
-    }, 3000);
+  const showToast = (msg, type = 'success') => {
+    setToastMessage(msg); setToastType(type);
+    setTimeout(() => setToastMessage(''), 3500);
   };
 
   const handleMarkAsPaid = (bookingCode) => {
+    const booking = bookings.find(b => b.bookingCode === bookingCode);
+    if (!booking) return;
+    
+    const isCash = booking.paymentStatus === 'Pay at Hotel' ||
+                   booking.paymentMethod === 'Bayar di Hotel' ||
+                   booking.paymentStatus === 'Awaiting Payment' ||
+                   !booking.paymentMethod;
+                   
+    if (!isCash) {
+      showToast('Staff hanya dapat mengkonfirmasi pembayaran Cash (Bayar di Hotel).', 'error');
+      return;
+    }
+    
     const updatedBookings = bookings.map(b => {
-      if (b.bookingCode === bookingCode) {
-        let rev = b.totalRevenue;
-        if (!rev || rev === 0) {
-          const room = rooms.find(r => r.name === b.roomType);
-          const price = room ? room.price : (b.roomType === 'VIP Suite' ? 250000 : 150000);
-          rev = price * (b.nights || 1);
-        }
-        return {
-          ...b,
-          paymentStatus: 'Paid',
-          totalRevenue: rev,
-          paidAt: new Date().toISOString()
-        };
-      }
-      return b;
+      if (b.bookingCode !== bookingCode) return b;
+      const room = rooms.find(r => r.roomNumber === b.roomNumber) ||
+                   rooms.find(r => r.name === b.roomType);
+      const price = room ? room.price : 150000;
+      const rev = b.totalRevenue || price * (b.nights || 1);
+      
+      return { ...b, paymentStatus: 'Paid', paymentMethod: b.paymentMethod || 'Bayar di Hotel', totalRevenue: rev,
+               paidAt: new Date().toISOString(), confirmedBy: 'staff' };
     });
     setBookings(updatedBookings);
     localStorage.setItem('hotel_bookings', JSON.stringify(updatedBookings));
-    showToast(`Booking ${bookingCode} berhasil ditandai Lunas!`);
-    
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new Event('storage'));
-    }
+    showToast(`Booking ${bookingCode} berhasil dikonfirmasi Lunas (Cash)!`);
+    window.dispatchEvent(new Event('storage'));
   };
 
   const handleCancelBooking = (bookingCode) => {
-    if (window.confirm(`Apakah Anda yakin ingin membatalkan booking ${bookingCode}?`)) {
-      const updatedBookings = bookings.filter(b => b.bookingCode !== bookingCode);
-      setBookings(updatedBookings);
-      localStorage.setItem('hotel_bookings', JSON.stringify(updatedBookings));
-      showToast(`Booking ${bookingCode} telah dibatalkan.`);
-      
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('storage'));
-      }
+    if (!window.confirm(`Batalkan booking ${bookingCode}?`)) return;
+    const updated = bookings.filter(b => b.bookingCode !== bookingCode);
+    setBookings(updated);
+    localStorage.setItem('hotel_bookings', JSON.stringify(updated));
+    showToast(`Booking ${bookingCode} dibatalkan.`);
+    window.dispatchEvent(new Event('storage'));
+  };
+
+  const formatIDR = (n) => new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(n||0);
+  const formatDate = (s) => {
+    if (!s) return '-';
+    try {
+      const d = new Date(s);
+      if (isNaN(d.getTime())) return '-';
+      return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+    } catch (e) {
+      return '-';
     }
   };
 
-  // Format Mata Uang IDR
-  const formatIDR = (num) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0
-    }).format(num);
-  };
+  // ── Statistics ──────────────────────────────────────────────
+  const totalBookings     = bookings.length;
+  const paidCount         = bookings.filter(b => b.paymentStatus === 'Paid').length;
+  const pendingCash       = bookings.filter(b => b.paymentStatus === 'Pay at Hotel').length;
+  const awaitingTF        = bookings.filter(b => b.paymentStatus === 'Awaiting Confirmation').length;
+  const occupiedRooms     = rooms.filter(room => bookings.some(b =>
+    (b.roomNumber ? b.roomNumber === room.roomNumber : b.roomType === room.name) &&
+    b.paymentStatus !== 'Cancelled')).length;
+  const availableRooms    = rooms.length - occupiedRooms;
 
-  if (checkingAuth) {
-    return (
-      <div className="auth-loading" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter, sans-serif', backgroundColor: '#fafaf9' }}>
-        <p>Memverifikasi otorisasi...</p>
-      </div>
-    );
-  }
+  // ── Helper: is room occupied ─────────────────────────────────
+  const getRoomBooking = (room) =>
+    bookings.find(b =>
+      (b.roomNumber ? b.roomNumber === room.roomNumber : b.roomType === room.name) &&
+      b.paymentStatus !== 'Cancelled'
+    ) || null;
 
-  if (!isAuthorized) {
-    return (
-      <div className="access-denied-page">
-        <div className="access-denied-card">
-          <FaLock className="lock-icon" />
-          <h2>Akses Ditolak (Access Denied)</h2>
-          <p>Anda harus masuk sebagai <strong>Staff</strong> untuk mengakses portal ini.</p>
-          <div className="denied-actions">
-            <Link href="/staff/login" className="btn-gold">Login Sebagai Staff</Link>
-            <Link href="/" className="back-link">Kembali ke Halaman Utama</Link>
-          </div>
+  const navItems = [
+    { id: 'dashboard',    label: 'Dashboard',     icon: <FaTachometerAlt /> },
+    { id: 'reservations', label: 'Reservations',  icon: <FaCalendarAlt /> },
+    { id: 'rooms',        label: 'Room Status',   icon: <FaDoorOpen /> },
+    { id: 'settings',     label: 'Settings',      icon: <FaCog /> },
+  ];
+
+  // ── Auth guards ──────────────────────────────────────────────
+  if (checkingAuth) return (
+    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Inter,sans-serif',background:'#f5f5f4'}}>
+      <p>Memverifikasi otorisasi...</p>
+    </div>
+  );
+
+  if (!isAuthorized) return (
+    <div className="ad-page">
+      <div className="ad-card">
+        <FaLock className="ad-lock" />
+        <h2>Akses Ditolak</h2>
+        <p>Anda harus masuk sebagai <strong>Staff</strong> untuk mengakses portal ini.</p>
+        <div className="ad-actions">
+          <Link href="/staff/login" className="btn-gold">Login Sebagai Staff</Link>
+          <Link href="/" className="ad-back">Kembali ke Halaman Utama</Link>
         </div>
-        <style jsx>{`
-          .access-denied-page {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #f7f6f5;
-            padding: 20px;
-            font-family: 'Inter', sans-serif;
-          }
-          .access-denied-card {
-            background-color: #ffffff;
-            max-width: 450px;
-            width: 100%;
-            padding: 40px;
-            border-radius: var(--radius-md);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            text-align: center;
-            border: 1px solid #eaeaea;
-          }
-          .lock-icon {
-            font-size: 3rem;
-            color: #f56c6c;
-            margin-bottom: 20px;
-          }
-          .access-denied-card h2 {
-            font-family: var(--font-title);
-            color: var(--color-blue-deep);
-            font-size: 1.6rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-          }
-          .access-denied-card p {
-            color: var(--color-text-light);
-            font-size: 0.95rem;
-            margin-bottom: 30px;
-            line-height: 1.5;
-          }
-          .denied-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-          }
-          .btn-gold {
-            background-color: var(--color-gold);
-            color: #ffffff;
-            padding: 12px 30px;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            border-radius: var(--radius-sm);
-          }
-          .back-link {
-            font-size: 0.9rem;
-            color: var(--color-text-light);
-            font-weight: 500;
-          }
-          .back-link:hover {
-            color: var(--color-gold);
-          }
-        `}</style>
       </div>
-    );
-  }
+      <style jsx>{`.ad-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f5f5f4;padding:20px;font-family:'Inter',sans-serif}.ad-card{background:white;max-width:420px;width:100%;padding:48px 40px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.08);text-align:center}.ad-lock{font-size:3rem;color:#ef4444;margin-bottom:20px}.ad-card h2{font-family:var(--font-title);color:var(--color-blue-deep);font-size:1.6rem;font-weight:700;margin-bottom:12px}.ad-card p{color:var(--color-text-light);font-size:.95rem;margin-bottom:30px;line-height:1.5}.ad-actions{display:flex;flex-direction:column;gap:15px;align-items:center}.btn-gold{background-color:var(--color-gold);color:#fff;padding:12px 30px;font-weight:600;text-transform:uppercase;font-size:.8rem;letter-spacing:1px;border-radius:var(--radius-sm)}.ad-back{font-size:.9rem;color:var(--color-text-light);font-weight:500}`}</style>
+    </div>
+  );
 
   return (
-    <div className="dashboard-page">
-      <header className="dashboard-header">
-        <div className="header-brand">
-          <Link href="/" className="back-link-home">
-            <FaArrowLeft /> Kembali ke Website
-          </Link>
-          <div className="brand-logo-container" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '5px' }}>
-            <img src="/assets/logo.png" alt="Hotel Arca Logo" style={{ height: '40px', width: 'auto' }} />
-            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: '1.1', textAlign: 'left' }}>
-              <span style={{ fontFamily: 'var(--font-title)', fontSize: '0.55rem', fontWeight: '400', color: 'var(--color-gold)', letterSpacing: '2px', textTransform: 'uppercase' }}>Hotel</span>
-              <span style={{ fontFamily: 'var(--font-title)', fontSize: '1.1rem', fontWeight: '700', color: '#fff', letterSpacing: '1px', textTransform: 'uppercase' }}>Arca</span>
-            </div>
-            <span style={{ height: '25px', width: '1px', backgroundColor: 'rgba(255,255,255,0.2)', margin: '0 5px' }}></span>
-            <span style={{ color: 'var(--color-gold)', fontSize: '1rem', fontWeight: '500', fontFamily: 'var(--font-title)' }}>Portal Manajemen Staff</span>
+    <div className="portal-layout">
+      {/* ── SIDEBAR ────────────────────── */}
+      <aside className="sidebar">
+        <div className="sb-brand">
+          <img src="/assets/logo.png" alt="Hotel Arca" style={{height:'36px',width:'auto'}} />
+          <div className="sb-brand-text">
+            <span className="sb-portal">Staff Portal</span>
+            <span className="sb-sub">ARCA MANAGEMENT</span>
           </div>
         </div>
-        <button onClick={handleLogout} className="btn-logout">
-          <FaSignOutAlt /> Log Out
-        </button>
-      </header>
 
-      <main className="dashboard-main">
-        {/* Toast Notification */}
+        <nav className="sb-nav">
+          {navItems.map(item => (
+            <button key={item.id}
+              className={`nav-item ${activeNav === item.id ? 'active' : ''}`}
+              onClick={() => setActiveNav(item.id)}>
+              <span className="nav-icon">{item.icon}</span>
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </nav>
+
+        <Link href="/#booking" className="new-booking-btn">+ NEW BOOKING</Link>
+
+        <div className="sb-bottom">
+          <Link href="/" className="sb-link"><FaHome /><span>Back to Website</span></Link>
+          <button onClick={() => { localStorage.removeItem('currentUser'); window.location.href='/staff/login'; }} className="sb-logout">
+            <FaSignOutAlt /><span>Logout</span>
+          </button>
+          <div className="sb-avatar">
+            <div className="av-circle"><FaUser /></div>
+            <div className="av-info">
+              <span className="av-name">{currentUser?.name || 'Staff'}</span>
+              <span className="av-role">Staff</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* ── MAIN ────────────────────────── */}
+      <main className="main-content">
         {toastMessage && (
-          <div className="toast-notification">
-            <FaCheckCircle className="toast-icon" />
+          <div className={`toast ${toastType === 'error' ? 'toast-err' : ''}`}>
+            {toastType === 'error' ? '⚠' : <FaCheckCircle style={{color:'var(--color-gold)'}} />}
             <span>{toastMessage}</span>
           </div>
         )}
 
-        {/* Navigation Tabs */}
-        <div className="dashboard-tabs">
-          <button 
-            onClick={() => setActiveTab('rooms')} 
-            className={`tab-btn ${activeTab === 'rooms' ? 'active' : ''}`}
-          >
-            <FaBed /> Daftar Kamar (Rooms)
-          </button>
-          <button 
-            onClick={() => setActiveTab('bookings')} 
-            className={`tab-btn ${activeTab === 'bookings' ? 'active' : ''}`}
-          >
-            <FaCalendarAlt /> Daftar Booking (Reservations)
-          </button>
-        </div>
+        {/* ── DASHBOARD ── */}
+        {activeNav === 'dashboard' && (
+          <div className="cs">
+            <div className="page-hdr">
+              <div>
+                <h1 className="pg-title">Staff Dashboard</h1>
+                <p className="pg-sub">Selamat datang, {currentUser?.name || 'Staff'}. Ringkasan harian Arca Hotel.</p>
+              </div>
+              <button className="refresh-btn" onClick={reloadBookings} title="Refresh">↻ Refresh</button>
+            </div>
 
-        {/* Tab Content */}
-        {activeTab === 'rooms' ? (
-          <div className="dashboard-card">
-            <h2>Daftar Status Kamar</h2>
-            <div className="rooms-list-grid">
-              {rooms.map(room => {
-                const activeRoomBookings = bookings.filter(b => b.roomType === room.name);
-                const isBooked = activeRoomBookings.length > 0;
-                return (
-                  <div key={room.id} className="room-status-card">
-                    <div className="room-status-img" style={{ backgroundImage: `url(${room.image})` }} />
-                    <div className="room-status-info">
-                      <h3>{room.name}</h3>
-                      <p className="price-label">{formatIDR(room.price)} / malam</p>
-                      <p className="desc-label">{room.description}</p>
-                      <div className="status-badge-container">
-                        <span className={`status-badge ${isBooked ? 'occupied' : 'available'}`}>
-                          {isBooked ? 'TERPESAN (OCCUPIED)' : 'TERSEDIA (AVAILABLE)'}
-                        </span>
-                      </div>
-                      {isBooked && (
-                        <div className="room-booking-detail">
-                          <p><strong>Tamu:</strong> {activeRoomBookings[0].guestName}</p>
-                          <p><strong>Tanggal:</strong> {activeRoomBookings[0].checkIn} s/d {activeRoomBookings[0].checkOut}</p>
-                        </div>
-                      )}
-                    </div>
+            {/* Stats */}
+            <div className="stats-grid">
+              {[
+                { icon:<FaClipboardList/>, label:'Total Booking', value:totalBookings, color:'blue' },
+                { icon:<FaCheckCircle/>,   label:'Terkonfirmasi', value:paidCount,     color:'green' },
+                { icon:<FaMoneyBillWave/>, label:'Bayar di Hotel', value:pendingCash,  color:'orange' },
+                { icon:<FaDoorOpen/>,      label:'Kamar Tersedia', value:availableRooms+'/'+rooms.length, color:'teal' },
+              ].map((s,i) => (
+                <div key={i} className="stat-card">
+                  <div className={`stat-icon si-${s.color}`}>{s.icon}</div>
+                  <div className="stat-info">
+                    <span className="stat-label">{s.label}</span>
+                    <span className="stat-value">{s.value}</span>
                   </div>
-                );
-              })}
+                </div>
+              ))}
+            </div>
+
+            {/* Room Overview Grid */}
+            <div className="cc">
+              <div className="cc-hdr">
+                <h2 className="cc-title">Status 18 Kamar</h2>
+                <button className="view-all" onClick={() => setActiveNav('rooms')}>Lihat Detail →</button>
+              </div>
+              <div className="room-grid-mini">
+                {rooms.map(room => {
+                  const bk = getRoomBooking(room);
+                  return (
+                    <div key={room.roomNumber} className={`rgm-card ${bk ? 'rgm-occ' : 'rgm-avail'}`}>
+                      <span className="rgm-num">{room.roomNumber}</span>
+                      <span className="rgm-type">{room.name === 'Economy Room' ? 'ECO' : room.name === 'Standard Room' ? 'STD' : 'VIP'}</span>
+                      <span className={`rgm-dot ${bk ? 'dot-red' : 'dot-green'}`}></span>
+                      {bk && <span className="rgm-guest" title={bk.guestName}>{bk.guestName?.split(' ')[0]}</span>}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Recent bookings */}
+            <div className="cc">
+              <div className="cc-hdr">
+                <h2 className="cc-title">Reservasi Terbaru</h2>
+                <button className="view-all" onClick={() => setActiveNav('reservations')}>Lihat Semua →</button>
+              </div>
+              {bookings.length === 0 ? (
+                <div className="empty-state"><FaCalendarAlt style={{fontSize:'2rem',color:'var(--color-gold)',marginBottom:'10px'}}/><p>Belum ada booking masuk.</p></div>
+              ) : (
+                <div className="table-responsive">
+                  <table className="dt">
+                    <thead><tr>
+                      <th>Kode Booking</th><th>Tamu</th><th>Kamar</th>
+                      <th>Check-in</th><th>Status</th>
+                    </tr></thead>
+                    <tbody>
+                      {bookings.slice(0,6).map((b,i) => (
+                        <tr key={b.bookingCode||i}>
+                          <td><span className="code-badge"><FaTicketAlt /> {b.bookingCode}</span></td>
+                          <td><strong>{b.guestName}</strong></td>
+                          <td>
+                            {b.roomNumber && <span className="room-num-badge">{b.roomNumber}</span>}
+                            <span className="room-tag">{b.roomType}</span>
+                          </td>
+                          <td className="date-cell">{formatDate(b.checkIn)}</td>
+                          <td><span className={`pill ${b.paymentStatus==='Paid'?'pill-g':b.paymentStatus==='Pay at Hotel'?'pill-o':b.paymentStatus==='Awaiting Confirmation'?'pill-b':'pill-r'}`}>
+                            {b.paymentStatus==='Paid'?'✓ Lunas':b.paymentStatus==='Pay at Hotel'?'⏳ Bayar Hotel':b.paymentStatus==='Awaiting Confirmation'?'🔄 TF Menunggu':'⚠ Belum Bayar'}
+                          </span></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
-        ) : (
-          <div className="dashboard-card">
-            <h2>Daftar Booking Masuk</h2>
-            {bookings.length === 0 ? (
-              <div className="empty-state">
-                <p>Belum ada kamar yang dibooking saat ini.</p>
+        )}
+
+        {/* ── RESERVATIONS ── */}
+        {activeNav === 'reservations' && (
+          <div className="cs">
+            <div className="page-hdr">
+              <div>
+                <h1 className="pg-title">Daftar Reservasi</h1>
+                <p className="pg-sub">Staff dapat mengkonfirmasi pembayaran <strong>Cash (Bayar di Hotel)</strong>.</p>
               </div>
-            ) : (
-              <div className="table-responsive">
-                <table className="bookings-table">
-                  <thead>
-                    <tr>
-                      <th>Kode</th>
-                      <th>Nama Tamu</th>
-                      <th>Telepon</th>
-                      <th>Domisili</th>
-                      <th>Tipe Kamar</th>
-                      <th>Check-in & Check-out</th>
-                      <th>Durasi</th>
-                      <th>Tamu</th>
-                      <th>Welcome Drink</th>
-                      <th>Pembayaran</th>
-                      <th>Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {bookings.map((booking, idx) => (
-                      <tr key={booking.bookingCode || idx}>
-                        <td><strong>{booking.bookingCode}</strong></td>
-                        <td>{booking.guestName}</td>
-                        <td>{booking.phoneNumber || '-'}</td>
-                        <td>{booking.domicile || '-'}</td>
-                        <td><span className="room-tag-table">{booking.roomType}</span></td>
-                        <td className="table-date-cell">
-                          <div>In: {booking.checkIn}</div>
-                          <div>Out: {booking.checkOut}</div>
-                        </td>
-                        <td>{booking.nights} Malam</td>
-                        <td>{booking.guestsCount} Orang</td>
-                        <td>
-                          <span className="drink-badge">
-                            {booking.welcomeDrink}
-                          </span>
-                        </td>
-                        <td>
-                          <span className={`payment-badge ${booking.paymentStatus === 'Paid' ? 'paid' : booking.paymentStatus === 'Pay at Hotel' ? 'pay-hotel' : 'awaiting'}`}>
-                            {booking.paymentStatus === 'Paid' ? '✓ Lunas' : booking.paymentStatus === 'Pay at Hotel' ? '⏳ Bayar di Hotel' : '⚠ Belum Bayar'}
-                          </span>
-                          {booking.paymentMethod && (
-                            <div style={{ fontSize: '0.72rem', color: 'var(--color-text-light)', marginTop: '3px' }}>
-                              {booking.paymentMethod}
-                            </div>
-                          )}
-                        </td>
-                        <td>
-                          <div style={{ display: 'flex', gap: '8px' }}>
-                            {booking.paymentStatus !== 'Paid' && (
-                              <button 
-                                onClick={() => handleMarkAsPaid(booking.bookingCode)}
-                                className="btn-action-paid"
-                                title="Tandai Lunas"
-                              >
-                                <FaCheck /> Lunas
-                              </button>
-                            )}
-                            <button 
-                              onClick={() => handleCancelBooking(booking.bookingCode)}
-                              className="btn-action-cancel"
-                              title="Batalkan Booking"
-                            >
-                              <FaTrash /> Batal
-                            </button>
+              <button className="refresh-btn" onClick={reloadBookings}>↻ Refresh</button>
+            </div>
+            <div className="cc">
+              <div className="cc-hdr">
+                <h2 className="cc-title">Booking List <span className="badge-cnt">{bookings.length}</span></h2>
+              </div>
+              {bookings.length === 0 ? (
+                <div className="empty-state"><FaListAlt style={{fontSize:'2rem',color:'var(--color-gold)',marginBottom:'10px'}}/><p>Belum ada booking masuk.</p></div>
+              ) : (
+                <div className="table-responsive">
+                  <table className="dt">
+                    <thead><tr>
+                      <th>Kode Booking</th><th>Nama Tamu</th><th>Telepon</th><th>Domisili</th>
+                      <th>No. Kamar</th><th>Tipe Kamar</th><th>Check-in</th><th>Check-out</th>
+                      <th>Durasi</th><th>Tamu</th><th>Drink</th><th>Pembayaran</th><th>Total</th><th>Aksi</th>
+                    </tr></thead>
+                    <tbody>
+                      {bookings.map((b,i) => {
+                        const isCash = b.paymentStatus === 'Pay at Hotel' || 
+                                       (b.paymentMethod && b.paymentMethod.includes('Bayar di Hotel')) || 
+                                       b.paymentStatus === 'Awaiting Payment' || 
+                                       !b.paymentMethod;
+                        const canConfirm = b.paymentStatus !== 'Paid' && b.paymentStatus !== 'Cancelled' && isCash;
+                        const room = rooms.find(r => r.roomNumber === b.roomNumber) || rooms.find(r => r.name === b.roomType);
+                        const price = room ? room.price : 150000;
+                        const revenue = b.totalRevenue || price * (b.nights || 1);
+                        return (
+                          <tr key={b.bookingCode||i}>
+                            <td><span className="code-badge"><FaTicketAlt /> {b.bookingCode}</span></td>
+                            <td><strong>{b.guestName}</strong></td>
+                            <td>{b.phoneNumber||'-'}</td>
+                            <td>{b.domicile||'-'}</td>
+                            <td>{b.roomNumber ? <span className="room-num-badge">{b.roomNumber}</span> : '-'}</td>
+                            <td><span className="room-tag">{b.roomType}</span></td>
+                            <td className="date-cell">{formatDate(b.checkIn)}</td>
+                            <td className="date-cell">{formatDate(b.checkOut)}</td>
+                            <td><span className="dur-badge">{b.nights} Mlm</span></td>
+                            <td>{b.guestsCount} Org</td>
+                            <td><span className="drink-tag">{b.welcomeDrink}</span></td>
+                            <td>
+                              <span className={`pill ${b.paymentStatus==='Paid'?'pill-g':b.paymentStatus==='Pay at Hotel'?'pill-o':b.paymentStatus==='Awaiting Confirmation'?'pill-b':'pill-r'}`}>
+                                {b.paymentStatus==='Paid'?'✓ Lunas':b.paymentStatus==='Pay at Hotel'?'⏳ Bayar Hotel':b.paymentStatus==='Awaiting Confirmation'?'🔄 TF Menunggu':'⚠ Belum Bayar'}
+                              </span>
+                              {b.paymentMethod && <div style={{fontSize:'0.65rem',color:'#6b7280',marginTop:'2px'}}>{b.paymentMethod}</div>}
+                            </td>
+                            <td><strong style={{color: b.paymentStatus==='Paid' ? '#16a34a':'#6b7280', fontSize:'0.85rem', whiteSpace:'nowrap'}}>{formatIDR(revenue)}</strong></td>
+                            <td>
+                              <div style={{display:'flex',gap:'5px',flexWrap:'wrap'}}>
+                                {canConfirm && (
+                                  <button onClick={() => handleMarkAsPaid(b.bookingCode)} className="btn-paid" title="Konfirmasi Lunas">
+                                    <FaCheck /> Lunas
+                                  </button>
+                                )}
+                                {b.paymentStatus === 'Awaiting Confirmation' && (
+                                  <span style={{fontSize:'0.65rem',color:'#3b82f6',fontStyle:'italic',whiteSpace:'nowrap'}}>Tunggu Owner</span>
+                                )}
+                                <button onClick={() => handleCancelBooking(b.bookingCode)} className="btn-cancel" title="Batalkan">
+                                  <FaTrash />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── ROOM STATUS ── */}
+        {activeNav === 'rooms' && (
+          <div className="cs">
+            <div className="page-hdr">
+              <div>
+                <h1 className="pg-title">Status Kamar</h1>
+                <p className="pg-sub">Total <strong>{rooms.length} kamar</strong> — {availableRooms} tersedia, {occupiedRooms} terpesan.</p>
+              </div>
+              <button className="refresh-btn" onClick={reloadBookings}>↻ Refresh</button>
+            </div>
+
+            {/* Floor by floor */}
+            {[
+              { floor: 1, label: 'Lantai 1 — Economy & Standard Room', color: '#3b82f6' },
+              { floor: 2, label: 'Lantai 2 — VIP Suite',     color: '#d97706' },
+            ].map(flr => {
+              const flrRooms = rooms.filter(r => r.floor === flr.floor);
+              return (
+                <div key={flr.floor} className="cc" style={{marginBottom:'20px'}}>
+                  <div className="cc-hdr">
+                    <h2 className="cc-title" style={{color: flr.color}}>{flr.label}</h2>
+                    <span style={{fontSize:'0.8rem',color:'#6b7280'}}>{flrRooms.filter(r=>!getRoomBooking(r)).length} tersedia / {flrRooms.length} total</span>
+                  </div>
+                  <div className="rooms-floor-grid">
+                    {flrRooms.map(room => {
+                      const bk = getRoomBooking(room);
+                      return (
+                        <div key={room.roomNumber} className={`room-card-big ${bk ? 'rbc-occ' : 'rbc-avail'}`}>
+                          <div className="rbc-top">
+                            <span className="rbc-num">{room.roomNumber}</span>
+                            <span className={`rbc-status ${bk ? 'st-occ' : 'st-avail'}`}>
+                              {bk ? '● TERPESAN' : '● TERSEDIA'}
+                            </span>
                           </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                          <div className="rbc-price">{formatIDR(room.price)}/malam</div>
+                          {bk ? (
+                            <div className="rbc-guest-info">
+                              <p><strong>{bk.guestName}</strong></p>
+                              <p>📅 {formatDate(bk.checkIn)} → {formatDate(bk.checkOut)}</p>
+                              <p>🌙 {bk.nights} malam · 👤 {bk.guestsCount} tamu</p>
+                              <span className={`pill ${bk.paymentStatus==='Paid'?'pill-g':bk.paymentStatus==='Pay at Hotel'?'pill-o':'pill-b'}`} style={{fontSize:'0.68rem',marginTop:'6px',display:'inline-block'}}>
+                                {bk.paymentStatus==='Paid'?'✓ Lunas':bk.paymentStatus==='Pay at Hotel'?'⏳ Bayar Hotel':'🔄 Menunggu'}
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="rbc-empty">Kamar siap ditempati</div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* ── SETTINGS ── */}
+        {activeNav === 'settings' && (
+          <div className="cs">
+            <div className="page-hdr"><div>
+              <h1 className="pg-title">Pengaturan</h1>
+              <p className="pg-sub">Informasi akun portal staff.</p>
+            </div></div>
+            <div className="cc" style={{maxWidth:'480px'}}>
+              <h2 className="cc-title" style={{marginBottom:'20px'}}>Informasi Akun</h2>
+              {[['Nama',currentUser?.name||'Staff'],['Email',currentUser?.email||'staff@arca.com'],['Role','Staff']].map(([l,v])=>(
+                <div key={l} className="set-row"><span>{l}</span><strong>{v}</strong></div>
+              ))}
+              <button onClick={() => { localStorage.removeItem('currentUser'); window.location.href='/staff/login'; }}
+                style={{marginTop:'24px',background:'#ef4444',color:'white',border:'none',padding:'11px 22px',borderRadius:'8px',fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',gap:'8px'}}>
+                <FaSignOutAlt /> Logout
+              </button>
+            </div>
           </div>
         )}
       </main>
 
       <style jsx>{`
-        .dashboard-page {
-          min-height: 100vh;
-          background-color: #f7f6f5;
-          font-family: 'Inter', sans-serif;
-        }
-
-        .dashboard-header {
-          background-color: var(--color-blue-deep);
-          color: white;
-          padding: 20px 5%;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .header-brand h1 {
-          font-family: var(--font-title);
-          font-size: 1.8rem;
-          margin-top: 5px;
-        }
-
-        .back-link-home {
-          font-size: 0.85rem;
-          color: rgba(255, 255, 255, 0.7);
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          transition: var(--transition-smooth);
-        }
-
-        .back-link-home:hover {
-          color: var(--color-gold);
-        }
-
-        .btn-logout {
-          background: none;
-          border: 1px solid rgba(255, 255, 255, 0.4);
-          color: white;
-          padding: 8px 16px;
-          border-radius: var(--radius-sm);
-          cursor: pointer;
-          font-weight: 600;
-          font-size: 0.9rem;
-          transition: var(--transition-smooth);
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .btn-logout:hover {
-          background-color: #c0392b;
-          border-color: #c0392b;
-        }
-
-        .dashboard-main {
-          max-width: 1200px;
-          margin: 40px auto;
-          padding: 0 20px;
-        }
-
-        .dashboard-tabs {
-          display: flex;
-          gap: 15px;
-          margin-bottom: 25px;
-        }
-
-        .tab-btn {
-          background-color: white;
-          border: 1px solid var(--color-border);
-          padding: 12px 24px;
-          font-size: 0.95rem;
-          font-weight: 600;
-          color: var(--color-text-light);
-          cursor: pointer;
-          border-radius: var(--radius-sm);
-          transition: var(--transition-smooth);
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .tab-btn:hover {
-          border-color: var(--color-gold);
-          color: var(--color-blue-deep);
-        }
-
-        .tab-btn.active {
-          background-color: var(--color-gold);
-          color: white;
-          border-color: var(--color-gold);
-        }
-
-        .dashboard-card {
-          background-color: white;
-          padding: 30px;
-          border-radius: var(--radius-md);
-          box-shadow: var(--shadow-sm);
-          border: 1px solid var(--color-border);
-          margin-bottom: 30px;
-        }
-
-        .dashboard-card h2 {
-          font-family: var(--font-title);
-          color: var(--color-blue-deep);
-          font-size: 1.5rem;
-          margin-bottom: 25px;
-          border-bottom: 2px solid var(--color-border);
-          padding-bottom: 12px;
-        }
-
-        .rooms-list-grid {
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-        }
-
-        .room-status-card {
-          display: flex;
-          border: 1px solid var(--color-border);
-          border-radius: var(--radius-sm);
-          overflow: hidden;
-        }
-
-        @media (max-width: 768px) {
-          .room-status-card {
-            flex-direction: column;
-          }
-          .room-status-img {
-            width: 100% !important;
-            height: 200px;
-          }
-        }
-
-        .room-status-img {
-          width: 280px;
-          background-size: cover;
-          background-position: center;
-          flex-shrink: 0;
-        }
-
-        .room-status-info {
-          padding: 20px;
-          flex-grow: 1;
-        }
-
-        .room-status-info h3 {
-          font-family: var(--font-title);
-          font-size: 1.3rem;
-          color: var(--color-blue-deep);
-          margin-bottom: 6px;
-        }
-
-        .price-label {
-          color: var(--color-gold-hover);
-          font-weight: 700;
-          margin-bottom: 12px;
-          font-size: 1.05rem;
-        }
-
-        .desc-label {
-          font-size: 0.9rem;
-          color: var(--color-text-light);
-          line-height: 1.5;
-          margin-bottom: 15px;
-        }
-
-        .status-badge-container {
-          margin-bottom: 15px;
-        }
-
-        .status-badge {
-          font-size: 0.75rem;
-          font-weight: 700;
-          padding: 4px 10px;
-          border-radius: 20px;
-          letter-spacing: 0.5px;
-        }
-
-        .status-badge.available {
-          background-color: #f0f9eb;
-          color: #67c23a;
-          border: 1px solid #c2e7b0;
-        }
-
-        .status-badge.occupied {
-          background-color: #fef0f0;
-          color: #f56c6c;
-          border: 1px solid #fde2e2;
-        }
-
-        .room-booking-detail {
-          background-color: var(--color-sand-light);
-          padding: 12px;
-          border-radius: var(--radius-sm);
-          font-size: 0.88rem;
-          color: var(--color-text-dark);
-          margin-top: 10px;
-        }
-
-        .room-booking-detail p {
-          margin-bottom: 4px;
-        }
-
-        .room-booking-detail p:last-child {
-          margin-bottom: 0;
-        }
-
-        .table-responsive {
-          width: 100%;
-          overflow-x: auto;
-        }
-
-        .bookings-table {
-          width: 100%;
-          border-collapse: collapse;
-          text-align: left;
-          font-size: 0.9rem;
-        }
-
-        .bookings-table th, .bookings-table td {
-          padding: 16px;
-          border-bottom: 1px solid var(--color-border);
-        }
-
-        .bookings-table th {
-          font-weight: 600;
-          color: var(--color-blue-deep);
-          background-color: var(--color-blue-light);
-        }
-
-        .room-tag-table {
-          background-color: var(--color-gold-light);
-          color: var(--color-gold-hover);
-          padding: 2px 8px;
-          border-radius: 4px;
-          font-size: 0.8rem;
-          font-weight: 600;
-        }
-
-        .table-date-cell {
-          font-size: 0.85rem;
-          line-height: 1.4;
-        }
-
-        .drink-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          background-color: #fdf6ec;
-          color: #e6a23c;
-          border: 1px solid #f5dab1;
-          padding: 2px 10px;
-          border-radius: 20px;
-          font-size: 0.8rem;
-          font-weight: 500;
-        }
-
-        .status-label-confirmed {
-          color: #67c23a;
-          font-weight: 600;
-        }
-
-        .empty-state {
-          padding: 40px;
-          text-align: center;
-          color: var(--color-text-light);
-          background-color: var(--color-sand-light);
-          border-radius: var(--radius-sm);
-          border: 1px dashed var(--color-border);
-        }
-
-        .payment-badge {
-          display: inline-block;
-          font-size: 0.75rem;
-          font-weight: 600;
-          padding: 3px 10px;
-          border-radius: 20px;
-          white-space: nowrap;
-        }
-
-        .payment-badge.paid {
-          background-color: #f0f9eb;
-          color: #67c23a;
-          border: 1px solid #c2e7b0;
-        }
-
-        .payment-badge.pay-hotel {
-          background-color: #fdf6ec;
-          color: #e6a23c;
-          border: 1px solid #f5dab1;
-        }
-
-        .payment-badge.awaiting {
-          background-color: #fef0f0;
-          color: #f56c6c;
-          border: 1px solid #fde2e2;
-        }
-
+        /* Layout */
+        .portal-layout{display:flex;min-height:100vh;font-family:'Inter',sans-serif;background:#f5f5f4}
+        /* Sidebar */
+        .sidebar{width:220px;min-width:220px;background:#fff;border-right:1px solid #e8e8e4;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;box-shadow:2px 0 12px rgba(0,0,0,.04)}
+        .sb-brand{display:flex;align-items:center;gap:12px;padding:24px 20px 20px;border-bottom:1px solid #f0ede8}
+        .sb-brand-text{display:flex;flex-direction:column;line-height:1.2}
+        .sb-portal{font-family:var(--font-title);font-size:1rem;font-weight:700;color:var(--color-gold);letter-spacing:.5px}
+        .sb-sub{font-size:.58rem;font-weight:500;color:#9ca3af;letter-spacing:1.5px;text-transform:uppercase}
+        .sb-nav{padding:20px 12px;flex:1;display:flex;flex-direction:column;gap:4px}
+        .nav-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;border:none;background:none;cursor:pointer;font-size:.88rem;font-weight:500;color:#6b7280;text-align:left;transition:all .18s;width:100%}
+        .nav-item:hover{background:#fdf8ed;color:var(--color-blue-deep)}
+        .nav-item.active{background:#fdf8ed;color:var(--color-gold);font-weight:600;border-left:3px solid var(--color-gold)}
+        .nav-icon{font-size:.95rem;width:18px;text-align:center;flex-shrink:0}
+        .new-booking-btn{margin:0 16px 16px;display:block;text-align:center;padding:11px;background:linear-gradient(135deg,var(--color-gold),#d4a84b);color:#fff;font-size:.75rem;font-weight:700;letter-spacing:1.5px;border-radius:10px;transition:all .2s;box-shadow:0 4px 12px rgba(197,160,89,.3)}
+        .new-booking-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(197,160,89,.4)}
+        .sb-bottom{padding:16px;border-top:1px solid #f0ede8;display:flex;flex-direction:column;gap:8px}
+        .sb-link,.sb-logout{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:.84rem;font-weight:500;color:#6b7280;background:none;border:none;cursor:pointer;transition:all .18s;text-decoration:none;width:100%;text-align:left}
+        .sb-link:hover{background:#f0f9f0;color:#16a34a}
+        .sb-logout:hover{background:#fef2f2;color:#ef4444}
+        .sb-avatar{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:#f9f8f6;margin-top:4px}
+        .av-circle{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--color-blue-deep),#1a5276);display:flex;align-items:center;justify-content:center;color:var(--color-gold);font-size:.85rem;flex-shrink:0}
+        .av-info{display:flex;flex-direction:column;line-height:1.2;overflow:hidden}
+        .av-name{font-size:.82rem;font-weight:600;color:var(--color-blue-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .av-role{font-size:.68rem;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px}
+        /* Main */
+        .main-content{margin-left:220px;flex:1;min-height:100vh;min-width:0;width:calc(100% - 220px)}
+        .cs{padding:36px 40px}
+        .page-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
+        .pg-title{font-family:var(--font-title);font-size:1.85rem;color:var(--color-blue-deep);font-weight:700;margin-bottom:5px}
+        .pg-sub{color:#6b7280;font-size:.9rem}
+        .refresh-btn{background:#fff;border:1px solid #e8e8e4;color:var(--color-gold);padding:8px 16px;border-radius:8px;font-weight:600;font-size:.82rem;cursor:pointer;transition:all .2s}
+        .refresh-btn:hover{background:var(--color-gold);color:#fff}
+        /* Stats */
+        .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:24px}
+        .stat-card{background:#fff;border-radius:14px;padding:20px;display:flex;align-items:center;gap:14px;border:1px solid #e8e8e4;box-shadow:0 2px 8px rgba(0,0,0,.03);transition:box-shadow .2s}
+        .stat-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07)}
+        .stat-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0}
+        .si-blue{background:#eff6ff;color:#3b82f6}.si-green{background:#f0fdf4;color:#16a34a}.si-orange{background:#fff7ed;color:#ea580c}.si-teal{background:#f0fdfa;color:#0d9488}
+        .stat-info{display:flex;flex-direction:column;gap:3px}
+        .stat-label{font-size:.78rem;color:#6b7280;font-weight:500}
+        .stat-value{font-size:1.7rem;font-weight:700;color:var(--color-blue-deep);line-height:1}
+        /* Content Card */
+        .cc{background:#fff;border-radius:14px;padding:26px;border:1px solid #e8e8e4;box-shadow:0 2px 8px rgba(0,0,0,.03);margin-bottom:22px}
+        .cc-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid #f0ede8}
+        .cc-title{font-family:var(--font-title);font-size:1.1rem;color:var(--color-blue-deep);font-weight:600}
+        .badge-cnt{background:var(--color-gold);color:#fff;font-size:.68rem;padding:2px 8px;border-radius:20px;font-weight:600;margin-left:8px}
+        .view-all{background:none;border:none;color:var(--color-gold);font-size:.84rem;font-weight:600;cursor:pointer}
+        /* Room mini grid (dashboard) */
+        .room-grid-mini{display:grid;grid-template-columns:repeat(9,1fr);gap:8px}
+        .rgm-card{border-radius:8px;padding:8px 6px;text-align:center;border:1px solid;display:flex;flex-direction:column;align-items:center;gap:3px;transition:all .2s;position:relative}
+        .rgm-avail{background:#f0fdf4;border-color:#bbf7d0}.rgm-occ{background:#fef2f2;border-color:#fecaca}
+        .rgm-num{font-weight:800;font-size:.9rem;color:var(--color-blue-deep);font-family:'Courier New',monospace}
+        .rgm-type{font-size:.55rem;color:#6b7280;text-transform:uppercase;letter-spacing:.5px}
+        .rgm-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+        .dot-green{background:#16a34a}.dot-red{background:#ef4444}
+        .rgm-guest{font-size:.6rem;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+        /* Table */
+        .table-responsive{width:100%;overflow-x:auto;border-radius:8px}
+        .dt{width:100%;border-collapse:collapse;font-size:.84rem;min-width:900px}
+        .dt th{background:#f9f8f6;color:#374151;font-weight:600;font-size:.74rem;text-transform:uppercase;letter-spacing:.5px;padding:11px 12px;text-align:left;border-bottom:2px solid #e8e8e4;white-space:nowrap}
+        .dt td{padding:12px;border-bottom:1px solid #f0ede8;color:#374151;vertical-align:middle}
+        .dt tr:hover td{background:#fdf8ed}
+        .dt tr:last-child td{border-bottom:none}
+        /* Badges */
+        .code-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,var(--color-blue-deep),#1a5276);color:var(--color-gold);padding:4px 9px;border-radius:6px;font-size:.72rem;font-weight:700;font-family:'Courier New',monospace;white-space:nowrap}
+        .room-num-badge{display:inline-block;background:#fdf8ed;color:var(--color-gold-hover);border:1px solid #f5e6c0;padding:2px 7px;border-radius:5px;font-size:.75rem;font-weight:700;font-family:'Courier New',monospace;margin-right:5px}
+        .room-tag{background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe;padding:2px 8px;border-radius:5px;font-size:.73rem;font-weight:600;white-space:nowrap}
+        .date-cell{white-space:nowrap;font-size:.82rem}
+        .dur-badge{background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe;padding:2px 7px;border-radius:5px;font-size:.73rem;font-weight:600;white-space:nowrap}
+        .drink-tag{background:#fff7ed;color:#ea580c;border:1px solid #fed7aa;padding:2px 7px;border-radius:5px;font-size:.7rem;font-weight:500;white-space:nowrap}
+        .pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:.7rem;font-weight:600;white-space:nowrap}
+        .pill-g{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+        .pill-o{background:#fff7ed;color:#ea580c;border:1px solid #fed7aa}
+        .pill-b{background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe}
+        .pill-r{background:#fef2f2;color:#ef4444;border:1px solid #fecaca}
         /* Action Buttons */
-        .btn-action-paid {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          padding: 6px 12px;
-          font-size: 0.78rem;
-          font-weight: 600;
-          color: #fff;
-          background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-          border: none;
-          border-radius: var(--radius-sm);
-          cursor: pointer;
-          transition: var(--transition-smooth);
-          box-shadow: 0 2px 6px rgba(46, 204, 113, 0.15);
-        }
-
-        .btn-action-paid:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
-          filter: brightness(1.05);
-        }
-
-        .btn-action-cancel {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          padding: 6px 12px;
-          font-size: 0.78rem;
-          font-weight: 600;
-          color: #fff;
-          background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-          border: none;
-          border-radius: var(--radius-sm);
-          cursor: pointer;
-          transition: var(--transition-smooth);
-          box-shadow: 0 2px 6px rgba(231, 76, 60, 0.15);
-        }
-
-        .btn-action-cancel:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
-          filter: brightness(1.05);
-        }
-
-        /* Toast styles */
-        .toast-notification {
-          position: fixed;
-          top: 30px;
-          right: 30px;
-          background-color: rgba(10, 45, 66, 0.95);
-          backdrop-filter: blur(10px);
-          color: #fff;
-          padding: 16px 24px;
-          border-radius: var(--radius-md);
-          border: 1px solid var(--color-gold);
-          box-shadow: var(--shadow-lg);
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          z-index: 2000;
-          animation: slideInRight 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) both;
-        }
-
-        .toast-icon {
-          color: var(--color-gold);
-          font-size: 1.3rem;
-        }
-
-        @keyframes slideInRight {
-          from { transform: translateX(100%); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
-        }
+        .btn-paid{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;font-size:.73rem;font-weight:600;color:#fff;background:linear-gradient(135deg,#16a34a,#15803d);border:none;border-radius:6px;cursor:pointer;transition:all .2s;white-space:nowrap}
+        .btn-paid:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(22,163,74,.3)}
+        .btn-cancel{display:inline-flex;align-items:center;gap:4px;padding:5px 9px;font-size:.73rem;font-weight:600;color:#fff;background:linear-gradient(135deg,#ef4444,#dc2626);border:none;border-radius:6px;cursor:pointer;transition:all .2s}
+        .btn-cancel:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(239,68,68,.3)}
+        /* Floor room cards */
+        .rooms-floor-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+        .room-card-big{border-radius:12px;padding:16px;border:1px solid;transition:all .2s}
+        .rbc-avail{background:#f0fdf4;border-color:#bbf7d0}
+        .rbc-occ{background:#fff5f5;border-color:#fecaca}
+        .rbc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+        .rbc-num{font-size:1.3rem;font-weight:800;color:var(--color-blue-deep);font-family:'Courier New',monospace}
+        .rbc-status{font-size:.65rem;font-weight:700;letter-spacing:.5px}
+        .st-avail{color:#16a34a}.st-occ{color:#ef4444}
+        .rbc-price{font-size:.78rem;color:#6b7280;margin-bottom:10px}
+        .rbc-guest-info{font-size:.78rem;color:#374151;line-height:1.5;background:rgba(255,255,255,.7);padding:10px;border-radius:8px}
+        .rbc-guest-info p{margin:0 0 2px}
+        .rbc-empty{font-size:.78rem;color:#16a34a;font-style:italic;padding:8px 0}
+        /* Empty / Settings */
+        .empty-state{padding:40px 20px;text-align:center;color:#9ca3af;background:#fafaf9;border-radius:10px;border:1px dashed #d1d5db}
+        .set-row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid #f0ede8;font-size:.9rem}
+        .set-row span:first-child{color:#6b7280}
+        .set-row strong{color:var(--color-blue-deep)}
+        /* Toast */
+        .toast{position:fixed;top:22px;right:22px;background:rgba(10,37,64,.96);backdrop-filter:blur(10px);color:#fff;padding:13px 20px;border-radius:12px;border:1px solid var(--color-gold);box-shadow:0 8px 32px rgba(0,0,0,.2);display:flex;align-items:center;gap:10px;z-index:2000;font-size:.88rem;font-weight:500;animation:slideInR .3s both}
+        .toast-err{border-color:#ef4444;background:rgba(127,29,29,.95)}
+        @keyframes slideInR{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+        /* Responsive */
+        @media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.room-grid-mini{grid-template-columns:repeat(6,1fr)}.rooms-floor-grid{grid-template-columns:repeat(3,1fr)}}
+        @media(max-width:768px){.main-content{margin-left:0;width:100%}.cs{padding:20px 16px}.stats-grid{grid-template-columns:1fr 1fr}.room-grid-mini{grid-template-columns:repeat(4,1fr)}.rooms-floor-grid{grid-template-columns:repeat(2,1fr)}}
       `}</style>
     </div>
   );

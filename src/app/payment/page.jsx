@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { FaArrowLeft, FaCreditCard, FaUniversity, FaHotel, FaCheckCircle, FaMoneyBillWave, FaCopy } from 'react-icons/fa';
+import { FaArrowLeft, FaCreditCard, FaUniversity, FaHotel, FaCheckCircle, FaMoneyBillWave, FaCopy, FaTicketAlt } from 'react-icons/fa';
 
 const BANK_OPTIONS = [
   { id: 'bca', name: 'Bank BCA', account: '123-456-7890', holder: 'PT Hotel Arca Indonesia' },
@@ -41,11 +41,17 @@ function PaymentContent() {
       const found = bookings.find(b => b.bookingCode === bookingCode);
       if (found) {
         setBooking(found);
-        // Calculate total price
+        // Calculate total price — look up by roomNumber first, then by roomType
         const rooms = JSON.parse(localStorage.getItem('hotel_rooms') || '[]');
-        const room = rooms.find(r => r.name === found.roomType);
-        const pricePerNight = room ? room.price : (found.roomType === 'VIP Suite' ? 250000 : 150000);
-        setTotalPrice(pricePerNight * (found.nights || 1));
+        const room = (found.roomNumber && rooms.find(r => r.roomNumber === found.roomNumber)) ||
+                     rooms.find(r => r.name === found.roomType);
+        const pricePerNight = room ? room.price
+          : found.roomType === 'VIP Suite' ? 350000
+          : found.roomType === 'Standard Room' ? 200000
+          : 150000;
+        const calcTotal = pricePerNight * (found.nights || 1);
+        // Use totalRevenue if already set correctly, else recalculate
+        setTotalPrice(found.totalRevenue && found.totalRevenue > 0 ? found.totalRevenue : calcTotal);
       }
     }
   }, [bookingCode]);
@@ -74,7 +80,7 @@ function PaymentContent() {
         return {
           ...b,
           paymentMethod: paymentMethod === 'bank' ? `Transfer Bank (${BANK_OPTIONS.find(bo => bo.id === selectedBank)?.name || 'Bank'})` : 'Bayar di Hotel',
-          paymentStatus: paymentMethod === 'bank' ? 'Paid' : 'Pay at Hotel',
+          paymentStatus: paymentMethod === 'bank' ? 'Awaiting Confirmation' : 'Pay at Hotel',
           totalRevenue: totalPrice,
           paidAt: new Date().toISOString()
         };
@@ -129,11 +135,16 @@ function PaymentContent() {
           <h2>Pembayaran Berhasil Dikonfirmasi!</h2>
           <p className="success-sub">Terima kasih, <strong>{booking.guestName}</strong>.</p>
 
-          <div className="summary-box">
-            <div className="summary-row">
-              <span>Kode Booking</span>
-              <strong>{booking.bookingCode}</strong>
+          {/* Booking Code Prominent Badge */}
+          <div className="booking-code-badge">
+            <FaTicketAlt className="ticket-icon" />
+            <div>
+              <span className="code-label">Kode Booking Anda</span>
+              <span className="code-value">{booking.bookingCode}</span>
             </div>
+          </div>
+
+          <div className="summary-box">
             <div className="summary-row">
               <span>Tipe Kamar</span>
               <strong>{booking.roomType}</strong>
@@ -160,15 +171,15 @@ function PaymentContent() {
             </div>
             <div className="summary-row">
               <span>Status</span>
-              <strong style={{ color: paymentMethod === 'bank' ? '#67c23a' : '#e6a23c' }}>
-                {paymentMethod === 'bank' ? '✓ Sudah Dibayar' : '⏳ Bayar Saat Check-in'}
+              <strong style={{ color: paymentMethod === 'bank' ? '#e6a23c' : '#e6a23c' }}>
+                {paymentMethod === 'bank' ? '⏳ Menunggu Konfirmasi Owner' : '⏳ Bayar Saat Check-in'}
               </strong>
             </div>
           </div>
 
           <p style={{ fontSize: '0.85rem', color: 'var(--color-text-light)', marginBottom: '24px' }}>
             {paymentMethod === 'bank' 
-              ? 'Konfirmasi pembayaran Anda telah kami terima. Silakan tunjukkan kode booking saat check-in.'
+              ? 'Bukti transfer Anda sedang diverifikasi oleh owner. Silakan tunjukkan kode booking saat check-in.'
               : 'Silakan lakukan pembayaran di resepsionis saat check-in. Tunjukkan kode booking Anda.'}
           </p>
           
@@ -202,8 +213,40 @@ function PaymentContent() {
           }
           .success-sub {
             color: var(--color-text-light);
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             font-size: 0.95rem;
+          }
+          .booking-code-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            background: linear-gradient(135deg, var(--color-blue-deep) 0%, #061924 100%);
+            color: white;
+            padding: 16px 28px;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+            border: 2px solid var(--color-gold);
+            box-shadow: 0 4px 20px rgba(197, 160, 89, 0.25);
+          }
+          .ticket-icon {
+            font-size: 1.8rem;
+            color: var(--color-gold);
+          }
+          .code-label {
+            display: block;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+          }
+          .code-value {
+            display: block;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--color-gold);
+            letter-spacing: 2px;
+            font-family: 'Courier New', monospace;
           }
           .summary-box {
             background: var(--color-sand-light);
@@ -245,13 +288,25 @@ function PaymentContent() {
           <p>Selesaikan pembayaran untuk menyelesaikan reservasi Anda</p>
         </div>
 
+        {/* Booking Code Prominent Banner */}
+        <div className="booking-code-banner">
+          <FaTicketAlt className="banner-ticket-icon" />
+          <div className="banner-code-content">
+            <span className="banner-label">Kode Booking Anda</span>
+            <span className="banner-code">{booking.bookingCode}</span>
+          </div>
+          <button 
+            className="banner-copy-btn"
+            onClick={() => handleCopy(booking.bookingCode, 'bookingCode')}
+            title="Salin kode booking"
+          >
+            <FaCopy /> {copiedField === 'bookingCode' ? 'Tersalin!' : 'Salin'}
+          </button>
+        </div>
+
         {/* Booking Summary */}
         <div className="booking-summary">
           <h3>Ringkasan Booking</h3>
-          <div className="summary-row">
-            <span>Kode Booking</span>
-            <strong>{booking.bookingCode}</strong>
-          </div>
           <div className="summary-row">
             <span>Nama Tamu</span>
             <strong>{booking.guestName}</strong>
@@ -269,8 +324,12 @@ function PaymentContent() {
             <strong>{booking.roomType}</strong>
           </div>
           <div className="summary-row">
-            <span>Check-in / Check-out</span>
-            <strong>{booking.checkIn} — {booking.checkOut}</strong>
+            <span>Check-in</span>
+            <strong>{booking.checkIn}</strong>
+          </div>
+          <div className="summary-row">
+            <span>Check-out</span>
+            <strong>{booking.checkOut}</strong>
           </div>
           <div className="summary-row">
             <span>Durasi</span>
@@ -321,7 +380,7 @@ function PaymentContent() {
             <h3>Pilih Bank Tujuan</h3>
             <div className="bank-list">
               {BANK_OPTIONS.map(bank => (
-                <button
+                <div
                   key={bank.id}
                   className={`bank-card ${selectedBank === bank.id ? 'selected' : ''}`}
                   onClick={() => setSelectedBank(bank.id)}
@@ -338,7 +397,7 @@ function PaymentContent() {
                   >
                     <FaCopy /> {copiedField === bank.id ? 'Tersalin!' : 'Salin'}
                   </button>
-                </button>
+                </div>
               ))}
             </div>
           </div>
@@ -404,7 +463,7 @@ function PaymentContent() {
 
         .payment-header {
           text-align: center;
-          margin-bottom: 28px;
+          margin-bottom: 20px;
         }
 
         .header-icon {
@@ -423,6 +482,70 @@ function PaymentContent() {
         .payment-header p {
           color: var(--color-text-light);
           font-size: 0.88rem;
+        }
+
+        /* Booking Code Banner */
+        .booking-code-banner {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          background: linear-gradient(135deg, var(--color-blue-deep) 0%, #0d3655 100%);
+          border: 2px solid var(--color-gold);
+          border-radius: var(--radius-md);
+          padding: 16px 20px;
+          margin-bottom: 24px;
+          box-shadow: 0 4px 20px rgba(197, 160, 89, 0.2);
+          animation: fadeIn 0.4s ease;
+        }
+
+        .banner-ticket-icon {
+          font-size: 1.8rem;
+          color: var(--color-gold);
+          flex-shrink: 0;
+        }
+
+        .banner-code-content {
+          flex: 1;
+          text-align: left;
+        }
+
+        .banner-label {
+          display: block;
+          font-size: 0.65rem;
+          color: rgba(255,255,255,0.55);
+          letter-spacing: 1.5px;
+          text-transform: uppercase;
+          margin-bottom: 3px;
+        }
+
+        .banner-code {
+          display: block;
+          font-size: 1.35rem;
+          font-weight: 800;
+          color: var(--color-gold);
+          letter-spacing: 2px;
+          font-family: 'Courier New', monospace;
+        }
+
+        .banner-copy-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          padding: 7px 13px;
+          border: 1px solid rgba(197, 160, 89, 0.4);
+          border-radius: var(--radius-sm);
+          background: rgba(197, 160, 89, 0.1);
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: var(--color-gold);
+          cursor: pointer;
+          transition: all 0.2s ease;
+          white-space: nowrap;
+        }
+
+        .banner-copy-btn:hover {
+          background: rgba(197, 160, 89, 0.25);
+          border-color: var(--color-gold);
         }
 
         /* Booking Summary */

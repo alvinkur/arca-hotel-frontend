@@ -2,687 +2,1135 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { 
-  FaArrowLeft, 
-  FaBed, 
-  FaMoneyBillWave, 
-  FaChartLine, 
-  FaSave,
-  FaLock,
-  FaSignOutAlt,
-  FaCheckCircle
+import {
+  FaBed, FaCalendarAlt, FaUser, FaCheckCircle, FaLock,
+  FaSignOutAlt, FaCheck, FaTrash, FaTachometerAlt, FaListAlt,
+  FaCog, FaHome, FaTicketAlt, FaMoneyBillWave, FaChartLine,
+  FaSave, FaClipboardList, FaUniversity, FaDoorOpen
 } from 'react-icons/fa';
 
 const DEFAULT_ROOMS = [
-  {
-    id: 1,
-    name: "Economy Room",
-    price: 150000,
-    description: "Perfect for budget-conscious travelers. Cozy layout with basic facilities, comfortable bed, and pleasant surroundings.",
-    image: "/assets/ekonomi_room.jpg",
-    amenities: ["Free WiFi", "Smart TV"]
-  },
-  {
-    id: 2,
-    name: "Standard Room",
-    price: 150000,
-    description: "A blend of comfort and style. Equipped with premium bedding, modern utilities, and a refreshing garden view balcony.",
-    image: "/assets/standart_room.jpg",
-    amenities: ["Free WiFi", "Breakfast", "Smart TV"]
-  },
-  {
-    id: 3,
-    name: "VIP Suite",
-    price: 250000,
-    description: "Experience absolute luxury. Spaciously designed with high-end furniture, private lounge, premium entertainment, and premium comfort.",
-    image: "/assets/vip_room.jpg",
-    amenities: ["Free WiFi", "Breakfast", "Smart TV"]
-  }
+  { id: 1,  roomNumber: "101", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
+  { id: 2,  roomNumber: "102", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
+  { id: 3,  roomNumber: "103", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
+  { id: 4,  roomNumber: "104", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
+  { id: 5,  roomNumber: "105", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
+  { id: 6,  roomNumber: "106", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
+  { id: 7,  roomNumber: "107", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
+  { id: 8,  roomNumber: "108", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
+  { id: 9,  roomNumber: "109", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
+  { id: 10, roomNumber: "110", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
+  { id: 11, roomNumber: "111", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
+  { id: 12, roomNumber: "112", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
+  { id: 13, roomNumber: "113", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
+  { id: 14, roomNumber: "114", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
+  { id: 15, roomNumber: "201", name: "VIP Suite", price: 350000, floor: 2, description: "Luxury suite with private lounge.", image: "/assets/vip_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV","Private Lounge"] },
+  { id: 16, roomNumber: "202", name: "VIP Suite", price: 350000, floor: 2, description: "Luxury suite with private lounge.", image: "/assets/vip_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV","Private Lounge"] },
+  { id: 17, roomNumber: "203", name: "VIP Suite", price: 350000, floor: 2, description: "Luxury suite with private lounge.", image: "/assets/vip_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV","Private Lounge"] },
+  { id: 18, roomNumber: "204", name: "VIP Suite", price: 350000, floor: 2, description: "Luxury suite with private lounge.", image: "/assets/vip_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV","Private Lounge"] },
 ];
 
 export default function OwnerDashboardPage() {
-  const [rooms, setRooms] = useState([]);
-  const [bookings, setBookings] = useState([]);
+  const [rooms, setRooms]               = useState([]);
+  const [bookings, setBookings]         = useState([]);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType]       = useState('success');
+  const [activeNav, setActiveNav]       = useState('dashboard');
+  const [currentUser, setCurrentUser]   = useState(null);
+  const [hoveredPointIndex, setHoveredPointIndex] = useState(null);
 
-  // Load data & verify authorization
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const currentUserStr = localStorage.getItem('currentUser');
-      if (currentUserStr) {
-        const currentUser = JSON.parse(currentUserStr);
-        if (currentUser.role === 'owner' || currentUser.email === 'owner@arca.com') {
-          setIsAuthorized(true);
-
-          // Load rooms
-          const storedRooms = localStorage.getItem('hotel_rooms');
-          let parsed = [];
-          try {
-            parsed = storedRooms ? JSON.parse(storedRooms) : [];
-          } catch (e) {}
-
-          const hasStandard = parsed.some(r => r.name === 'Standard Room');
-          const hasDeluxe = parsed.some(r => r.name === 'Deluxe Room');
-
-          if (!storedRooms || parsed.length === 0 || !hasStandard || hasDeluxe) {
-            localStorage.setItem('hotel_rooms', JSON.stringify(DEFAULT_ROOMS));
-            setRooms(DEFAULT_ROOMS);
-          } else {
-            setRooms(parsed);
-          }
-
-          // Load bookings
-          const storedBookings = localStorage.getItem('hotel_bookings');
-          if (storedBookings) {
-            setBookings(JSON.parse(storedBookings));
-          }
+    if (typeof window === 'undefined') return;
+    const userStr = localStorage.getItem('currentUser');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      setCurrentUser(user);
+      if (user.role === 'owner' || user.email === 'owner@arca.com') {
+        setIsAuthorized(true);
+        // Seed / migrate rooms to 18-room format
+        let stored = [];
+        try { stored = JSON.parse(localStorage.getItem('hotel_rooms') || '[]'); } catch(e) {}
+        const needsMigration = stored.some(r => r.floor === 3 || r.roomNumber === '301');
+        if (stored.length < 10 || needsMigration) {
+          localStorage.setItem('hotel_rooms', JSON.stringify(DEFAULT_ROOMS));
+          setRooms(DEFAULT_ROOMS);
+        } else {
+          setRooms(stored);
         }
+        // Load bookings
+        let bk = [];
+        try { bk = JSON.parse(localStorage.getItem('hotel_bookings') || '[]'); } catch(e) {}
+        setBookings(bk);
       }
-      setCheckingAuth(false);
     }
+    setCheckingAuth(false);
+
+    // Listen to localStorage changes in real time
+    const handleStorageChange = () => {
+      let bk = [];
+      try { bk = JSON.parse(localStorage.getItem('hotel_bookings') || '[]'); } catch(e) {}
+      setBookings(bk);
+      let rm = [];
+      try { rm = JSON.parse(localStorage.getItem('hotel_rooms') || '[]'); } catch(e) {}
+      if (rm.length > 0) setRooms(rm);
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('currentUser');
-    window.location.href = '/owner/login';
+  const reloadAll = () => {
+    let bk = [];
+    try { bk = JSON.parse(localStorage.getItem('hotel_bookings') || '[]'); } catch(e) {}
+    setBookings(bk);
+    let rm = [];
+    try { rm = JSON.parse(localStorage.getItem('hotel_rooms') || '[]'); } catch(e) {}
+    if (rm.length >= 10) setRooms(rm);
   };
 
-  const handlePriceChange = (roomId, newPrice) => {
-    const updated = rooms.map(r => r.id === roomId ? { ...r, price: Number(newPrice) } : r);
-    setRooms(updated);
+  const showToast = (msg, type = 'success') => {
+    setToastMessage(msg); setToastType(type);
+    setTimeout(() => setToastMessage(''), 3500);
   };
 
-  const handleSavePrices = () => {
-    localStorage.setItem('hotel_rooms', JSON.stringify(rooms));
-    showToast('Harga kamar berhasil diperbarui dan disimpan!');
+  // ── Helpers ─────────────────────────────────────────────────
+  const getRevenue = (booking) => {
+    if (booking.totalRevenue && booking.totalRevenue > 0) return booking.totalRevenue;
+    const room = rooms.find(r => r.roomNumber === booking.roomNumber) ||
+                 rooms.find(r => r.name === booking.roomType);
+    const price = room ? room.price : 150000;
+    return price * (booking.nights || 1);
   };
 
-  const showToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage('');
-    }, 3000);
-  };
-
-  const handleMarkAsPaid = (bookingCode) => {
-    const updatedBookings = bookings.map(b => {
-      if (b.bookingCode === bookingCode) {
-        let rev = b.totalRevenue;
-        if (!rev || rev === 0) {
-          const room = rooms.find(r => r.name === b.roomType);
-          const price = room ? room.price : (b.roomType === 'VIP Suite' ? 250000 : 150000);
-          rev = price * (b.nights || 1);
-        }
-        return {
-          ...b,
-          paymentStatus: 'Paid',
-          totalRevenue: rev,
-          paidAt: new Date().toISOString()
-        };
-      }
-      return b;
-    });
-    setBookings(updatedBookings);
-    localStorage.setItem('hotel_bookings', JSON.stringify(updatedBookings));
-    showToast(`Booking ${bookingCode} berhasil ditandai Lunas!`);
-    
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new Event('storage'));
+  const formatIDR = (n) => new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(n||0);
+  const formatDate = (s) => {
+    if (!s) return '-';
+    try {
+      const d = new Date(s);
+      if (isNaN(d.getTime())) return '-';
+      return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+    } catch (e) {
+      return '-';
     }
+  };
+
+  const getRoomBooking = (room) =>
+    bookings.find(b =>
+      (b.roomNumber ? b.roomNumber === room.roomNumber : b.roomType === room.name) &&
+      b.paymentStatus !== 'Cancelled'
+    ) || null;
+
+  // ── Statistics ───────────────────────────────────────────────
+  const paidBookings       = bookings.filter(b => b.paymentStatus === 'Paid');
+  const awaitingTF         = bookings.filter(b => b.paymentStatus === 'Awaiting Confirmation');
+  const payHotel           = bookings.filter(b => b.paymentStatus === 'Pay at Hotel');
+  const awaiting           = bookings.filter(b => b.paymentStatus === 'Awaiting Payment');
+
+  const confirmedRevenue   = paidBookings.reduce((s,b) => s + getRevenue(b), 0);
+  const pendingTFRevenue   = awaitingTF.reduce((s,b)  => s + getRevenue(b), 0);
+  const pendingCashRevenue = payHotel.reduce((s,b)    => s + getRevenue(b), 0);
+  const totalExpected      = bookings.filter(b=>b.paymentStatus!=='Cancelled')
+                                    .reduce((s,b) => s + getRevenue(b), 0);
+
+  const occupiedCount  = rooms.filter(r => getRoomBooking(r)).length;
+  const availableCount = rooms.length - occupiedCount;
+
+  // Revenue by type
+  const revenueByType = ['Economy Room','Standard Room','VIP Suite'].map(typeName => {
+    const paid = paidBookings.filter(b => b.roomType === typeName);
+    return { name: typeName, revenue: paid.reduce((s,b)=>s+getRevenue(b),0), count: paid.length };
+  });
+  const maxRev = Math.max(...revenueByType.map(r => r.revenue), 1);
+
+  // ── Actions ──────────────────────────────────────────────────
+  const handleMarkAsPaid = (bookingCode) => {
+    const booking = bookings.find(b => b.bookingCode === bookingCode);
+    if (!booking) return;
+    const updated = bookings.map(b => {
+      if (b.bookingCode !== bookingCode) return b;
+      
+      let method = b.paymentMethod;
+      if (!method) {
+        method = b.paymentStatus === 'Pay at Hotel' ? 'Bayar di Hotel' : 'Transfer Bank';
+      }
+      
+      return { ...b, paymentStatus:'Paid', paymentMethod: method, totalRevenue: getRevenue(b),
+               paidAt: new Date().toISOString(), confirmedBy:'owner' };
+    });
+    setBookings(updated);
+    localStorage.setItem('hotel_bookings', JSON.stringify(updated));
+    showToast(`Booking ${bookingCode} berhasil dikonfirmasi Lunas!`);
+    window.dispatchEvent(new Event('storage'));
   };
 
   const handleCancelBooking = (bookingCode) => {
-    if (window.confirm(`Apakah Anda yakin ingin membatalkan booking ${bookingCode}?`)) {
-      const updatedBookings = bookings.filter(b => b.bookingCode !== bookingCode);
-      setBookings(updatedBookings);
-      localStorage.setItem('hotel_bookings', JSON.stringify(updatedBookings));
-      showToast(`Booking ${bookingCode} telah dibatalkan.`);
+    if (!window.confirm(`Batalkan booking ${bookingCode}?`)) return;
+    const updated = bookings.filter(b => b.bookingCode !== bookingCode);
+    setBookings(updated);
+    localStorage.setItem('hotel_bookings', JSON.stringify(updated));
+    showToast(`Booking ${bookingCode} dibatalkan.`);
+    window.dispatchEvent(new Event('storage'));
+  };
+
+  const handlePriceChange = (roomId, val) =>
+    setRooms(prev => prev.map(r => r.id === roomId ? {...r, price: Number(val)} : r));
+
+  const handleSavePrices = () => {
+    localStorage.setItem('hotel_rooms', JSON.stringify(rooms));
+    showToast('Harga kamar berhasil disimpan!');
+  };
+
+  const navItems = [
+    { id:'dashboard', label:'Dashboard',    icon:<FaTachometerAlt /> },
+    { id:'bookings',  label:'Booking List', icon:<FaCalendarAlt /> },
+    { id:'analytics', label:'Revenue',      icon:<FaChartLine /> },
+    { id:'pricing',   label:'Room Pricing', icon:<FaBed /> },
+    { id:'settings',  label:'Settings',     icon:<FaCog /> },
+  ];
+
+  // ── Trend Chart Calculations ─────────────────────────────────
+  const getTrendData = () => {
+    const data = [];
+    const today = new Date();
+    // 7 days surrounding today (-3 to +3 days)
+    for (let i = -3; i <= 3; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      const dateStr = d.toISOString().split('T')[0];
       
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('storage'));
-      }
+      const dayBookings = bookings.filter(b => b.checkIn === dateStr && b.paymentStatus !== 'Cancelled');
+      const paidRev = dayBookings.filter(b => b.paymentStatus === 'Paid').reduce((s, b) => s + getRevenue(b), 0);
+      const totalRev = dayBookings.reduce((s, b) => s + getRevenue(b), 0);
+      
+      const label = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
+      data.push({ dateStr, label, paidRev, totalRev });
     }
+    return data;
   };
 
-  // Format Mata Uang IDR
-  const formatIDR = (num) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0
-    }).format(num);
-  };
+  const trendData = getTrendData();
+  const maxRevenueInTrend = Math.max(...trendData.map(d => d.totalRev), 350000); // base scale 350k (1 night of VIP)
+  
+  const chartWidth = 800;
+  const chartHeight = 220;
+  const paddingX = 75;
+  const paddingY = 25;
+  const paddingRight = 30;
+  const paddingBottom = 35;
+  
+  const points = trendData.map((d, index) => {
+    const x = paddingX + (index * (chartWidth - paddingX - paddingRight)) / (trendData.length - 1);
+    const yPaid = chartHeight - paddingBottom - (d.paidRev / maxRevenueInTrend) * (chartHeight - paddingY - paddingBottom);
+    const yTotal = chartHeight - paddingBottom - (d.totalRev / maxRevenueInTrend) * (chartHeight - paddingY - paddingBottom);
+    return { x, yPaid, yTotal, ...d };
+  });
 
-  // Hitung total revenue dari booking yang sudah dibayar (Lunas)
-  const paidBookings = bookings.filter(b => b.paymentStatus === 'Paid');
-  const totalRevenue = paidBookings.reduce((sum, booking) => sum + (booking.totalRevenue || 0), 0);
-  const awaitingCount = bookings.filter(b => b.paymentStatus === 'Awaiting Payment').length;
-  const paidCount = bookings.filter(b => b.paymentStatus === 'Paid').length;
-  const payHotelCount = bookings.filter(b => b.paymentStatus === 'Pay at Hotel').length;
-
-  if (checkingAuth) {
-    return (
-      <div className="auth-loading" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter, sans-serif', backgroundColor: '#fafaf9' }}>
-        <p>Memverifikasi otorisasi...</p>
-      </div>
-    );
+  let areaPaidPath = "";
+  let linePaidPath = "";
+  let lineTotalPath = "";
+  
+  if (points.length > 0) {
+    linePaidPath = `M ${points[0].x} ${points[0].yPaid} ` + points.slice(1).map(p => `L ${p.x} ${p.yPaid}`).join(' ');
+    areaPaidPath = `${linePaidPath} L ${points[points.length-1].x} ${chartHeight - paddingBottom} L ${points[0].x} ${chartHeight - paddingBottom} Z`;
+    lineTotalPath = `M ${points[0].x} ${points[0].yTotal} ` + points.slice(1).map(p => `L ${p.x} ${p.yTotal}`).join(' ');
   }
 
-  if (!isAuthorized) {
-    return (
-      <div className="access-denied-page">
-        <div className="access-denied-card">
-          <FaLock className="lock-icon" />
-          <h2>Akses Ditolak (Access Denied)</h2>
-          <p>Anda harus masuk sebagai <strong>Owner</strong> untuk mengakses portal analitik ini.</p>
-          <div className="denied-actions">
-            <Link href="/owner/login" className="btn-gold">Login Sebagai Owner</Link>
-            <Link href="/" className="back-link">Kembali ke Halaman Utama</Link>
-          </div>
+  // Donut Chart calculations
+  const getDonutData = () => {
+    const counts = { 'Economy Room': 0, 'Standard Room': 0, 'VIP Suite': 0 };
+    bookings.filter(b => b.paymentStatus !== 'Cancelled').forEach(b => {
+      if (counts[b.roomType] !== undefined) counts[b.roomType]++;
+    });
+    const total = Object.values(counts).reduce((s, c) => s + c, 0);
+    return Object.entries(counts).map(([name, count]) => ({
+      name,
+      count,
+      percentage: total > 0 ? (count / total) * 100 : 0
+    }));
+  };
+  const donutData = getDonutData();
+  const totalBookingsCount = bookings.filter(b => b.paymentStatus !== 'Cancelled').length;
+  
+  let accumulatedPercent = 0;
+  const donutCircles = donutData.map((d, i) => {
+    const radius = 50;
+    const circumference = 2 * Math.PI * radius; // 314.16
+    const strokeDasharray = `${(d.percentage * circumference) / 100} ${circumference}`;
+    const strokeDashoffset = `${- (accumulatedPercent * circumference) / 100}`;
+    accumulatedPercent += d.percentage;
+    
+    const colors = [
+      'var(--color-gold)', // Economy
+      '#3b82f6', // Standard
+      '#10b981'  // VIP
+    ];
+    
+    return {
+      ...d,
+      radius,
+      circumference,
+      strokeDasharray,
+      strokeDashoffset,
+      color: colors[i]
+    };
+  });
+
+  // ── Auth guards ───────────────────────────────────────────────
+  if (checkingAuth) return (
+    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Inter,sans-serif',background:'#f5f5f4'}}>
+      <p>Memverifikasi otorisasi...</p>
+    </div>
+  );
+
+  if (!isAuthorized) return (
+    <div className="ad-page">
+      <div className="ad-card">
+        <FaLock className="ad-lock" />
+        <h2>Akses Ditolak</h2>
+        <p>Anda harus masuk sebagai <strong>Owner</strong> untuk mengakses portal ini.</p>
+        <div className="ad-actions">
+          <Link href="/owner/login" className="btn-gold">Login Sebagai Owner</Link>
+          <Link href="/" className="ad-back">Kembali ke Halaman Utama</Link>
         </div>
-        <style jsx>{`
-          .access-denied-page {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #f7f6f5;
-            padding: 20px;
-            font-family: 'Inter', sans-serif;
-          }
-          .access-denied-card {
-            background-color: #ffffff;
-            max-width: 450px;
-            width: 100%;
-            padding: 40px;
-            border-radius: var(--radius-md);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            text-align: center;
-            border: 1px solid #eaeaea;
-          }
-          .lock-icon {
-            font-size: 3rem;
-            color: #f56c6c;
-            margin-bottom: 20px;
-          }
-          .access-denied-card h2 {
-            font-family: var(--font-title);
-            color: var(--color-blue-deep);
-            font-size: 1.6rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-          }
-          .access-denied-card p {
-            color: var(--color-text-light);
-            font-size: 0.95rem;
-            margin-bottom: 30px;
-            line-height: 1.5;
-          }
-          .denied-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-          }
-          .btn-gold {
-            background-color: var(--color-gold);
-            color: #ffffff;
-            padding: 12px 30px;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            border-radius: var(--radius-sm);
-          }
-          .back-link {
-            font-size: 0.9rem;
-            color: var(--color-text-light);
-            font-weight: 500;
-          }
-          .back-link:hover {
-            color: var(--color-gold);
-          }
-        `}</style>
       </div>
-    );
-  }
+      <style jsx>{`.ad-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f5f5f4;padding:20px;font-family:'Inter',sans-serif}.ad-card{background:white;max-width:420px;width:100%;padding:48px 40px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.08);text-align:center}.ad-lock{font-size:3rem;color:#ef4444;margin-bottom:20px}.ad-card h2{font-family:var(--font-title);color:var(--color-blue-deep);font-size:1.6rem;font-weight:700;margin-bottom:12px}.ad-card p{color:var(--color-text-light);font-size:.95rem;margin-bottom:30px;line-height:1.5}.ad-actions{display:flex;flex-direction:column;gap:15px;align-items:center}.btn-gold{background-color:var(--color-gold);color:#fff;padding:12px 30px;font-weight:600;text-transform:uppercase;font-size:.8rem;letter-spacing:1px;border-radius:var(--radius-sm)}.ad-back{font-size:.9rem;color:var(--color-text-light);font-weight:500}`}</style>
+    </div>
+  );
 
   return (
-    <div className="dashboard-page">
-      <header className="dashboard-header">
-        <div className="header-brand">
-          <Link href="/" className="back-link-home">
-            <FaArrowLeft /> Kembali ke Website
-          </Link>
-          <div className="brand-logo-container" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '5px' }}>
-            <img src="/assets/logo.png" alt="Hotel Arca Logo" style={{ height: '40px', width: 'auto' }} />
-            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: '1.1', textAlign: 'left' }}>
-              <span style={{ fontFamily: 'var(--font-title)', fontSize: '0.55rem', fontWeight: '400', color: 'var(--color-gold)', letterSpacing: '2px', textTransform: 'uppercase' }}>Hotel</span>
-              <span style={{ fontFamily: 'var(--font-title)', fontSize: '1.1rem', fontWeight: '700', color: '#fff', letterSpacing: '1px', textTransform: 'uppercase' }}>Arca</span>
-            </div>
-            <span style={{ height: '25px', width: '1px', backgroundColor: 'rgba(255,255,255,0.2)', margin: '0 5px' }}></span>
-            <span style={{ color: 'var(--color-gold)', fontSize: '1rem', fontWeight: '500', fontFamily: 'var(--font-title)' }}>Portal Keuangan & Analitik Owner</span>
+    <div className="portal-layout">
+      {/* ── SIDEBAR ─────────────────────────────────────── */}
+      <aside className="sidebar">
+        <div className="sb-brand">
+          <img src="/assets/logo.png" alt="Hotel Arca" style={{height:'36px',width:'auto'}} />
+          <div className="sb-brand-text">
+            <span className="sb-portal">Owner Portal</span>
+            <span className="sb-sub">ARCA MANAGEMENT</span>
           </div>
         </div>
-        <button onClick={handleLogout} className="btn-logout">
-          <FaSignOutAlt /> Log Out
-        </button>
-      </header>
+        <nav className="sb-nav">
+          {navItems.map(item => (
+            <button key={item.id}
+              className={`nav-item ${activeNav===item.id?'active':''}`}
+              onClick={() => setActiveNav(item.id)}>
+              <span className="nav-icon">{item.icon}</span>
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </nav>
+        <div className="sb-bottom">
+          <Link href="/" className="sb-link"><FaHome /><span>Back to Website</span></Link>
+          <button onClick={() => { localStorage.removeItem('currentUser'); window.location.href='/owner/login'; }} className="sb-logout">
+            <FaSignOutAlt /><span>Logout</span>
+          </button>
+          <div className="sb-avatar">
+            <div className="av-circle"><FaUser /></div>
+            <div className="av-info">
+              <span className="av-name">{currentUser?.name||'Owner'}</span>
+              <span className="av-role">Owner</span>
+            </div>
+          </div>
+        </div>
+      </aside>
 
-      <main className="dashboard-main">
-        {/* Toast Notification */}
+      {/* ── MAIN ───────────────────────────────────────── */}
+      <main className="main-content">
         {toastMessage && (
-          <div className="toast-notification">
-            <FaCheckCircle className="toast-icon" />
+          <div className={`toast ${toastType==='error'?'toast-err':''}`}>
+            {toastType==='error' ? '⚠' : <FaCheckCircle style={{color:'var(--color-gold)'}} />}
             <span>{toastMessage}</span>
           </div>
         )}
 
-        {/* Revenue Card Summary */}
-        <div className="revenue-summary-card">
-          <div className="revenue-icon-box">
-            <FaMoneyBillWave />
-          </div>
-          <div className="revenue-text-box">
-            <h2>Total Pendapatan Terkonfirmasi</h2>
-            <p className="revenue-val">{formatIDR(totalRevenue)}</p>
-            <p className="revenue-sub">Dihitung dari pemesanan dengan status Lunas dan Bayar di Hotel.</p>
-            <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
-              <span style={{ fontSize: '0.78rem', color: '#67c23a', background: 'rgba(103,194,58,0.15)', padding: '3px 10px', borderRadius: '12px' }}>✓ Lunas: {paidCount}</span>
-              <span style={{ fontSize: '0.78rem', color: '#e6a23c', background: 'rgba(230,162,60,0.15)', padding: '3px 10px', borderRadius: '12px' }}>⏳ Bayar di Hotel: {payHotelCount}</span>
-              <span style={{ fontSize: '0.78rem', color: '#f56c6c', background: 'rgba(245,108,108,0.15)', padding: '3px 10px', borderRadius: '12px' }}>⚠ Belum Bayar: {awaitingCount}</span>
+        {/* ── DASHBOARD ── */}
+        {activeNav === 'dashboard' && (
+          <div className="cs">
+            <div className="page-hdr">
+              <div>
+                <h1 className="pg-title">Executive Overview</h1>
+                <p className="pg-sub">Live performance — Arca Hotel · {new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</p>
+              </div>
+              <button className="refresh-btn" onClick={reloadAll}>↻ Refresh</button>
             </div>
-          </div>
-        </div>
 
-        {/* Flex Layout: Left for Room Pricing, Right for Bookings list */}
-        <div className="owner-grid">
-          <div className="owner-col-left">
-            <div className="dashboard-card">
-              <h2>Kelola Harga Kamar</h2>
-              <p style={{ color: 'var(--color-text-light)', fontSize: '0.88rem', marginBottom: '20px' }}>
-                Ubah harga per malam tipe kamar di bawah. Perubahan akan langsung disinkronkan ke halaman pemesanan customer.
-              </p>
+            {/* ── Revenue Cards Row ── */}
+            <div className="rev-cards-row">
+              <div className="rev-card rev-confirmed">
+                <div className="rc-top">
+                  <FaCheckCircle className="rc-icon" />
+                  <span className="rc-label">Revenue Terkonfirmasi</span>
+                </div>
+                <div className="rc-value">{formatIDR(confirmedRevenue)}</div>
+                <div className="rc-sub">{paidBookings.length} booking Lunas</div>
+              </div>
+              <div className="rev-card rev-pending-tf">
+                <div className="rc-top">
+                  <FaUniversity className="rc-icon" />
+                  <span className="rc-label">Pending Transfer Bank</span>
+                </div>
+                <div className="rc-value">{formatIDR(pendingTFRevenue)}</div>
+                <div className="rc-sub">{awaitingTF.length} booking menunggu konfirmasi</div>
+              </div>
+              <div className="rev-card rev-pending-cash">
+                <div className="rc-top">
+                  <FaMoneyBillWave className="rc-icon" />
+                  <span className="rc-label">Pending Bayar di Hotel</span>
+                </div>
+                <div className="rc-value">{formatIDR(pendingCashRevenue)}</div>
+                <div className="rc-sub">{payHotel.length} booking bayar saat check-in</div>
+              </div>
+              <div className="rev-card rev-total">
+                <div className="rc-top">
+                  <FaChartLine className="rc-icon" />
+                  <span className="rc-label">Estimasi Total Revenue</span>
+                </div>
+                <div className="rc-value">{formatIDR(totalExpected)}</div>
+                <div className="rc-sub">Semua booking aktif</div>
+              </div>
+            </div>
+
+            {/* Stats */}
+            <div className="stats-grid">
+              {[
+                { icon:<FaClipboardList/>, label:'Total Booking',    value:bookings.length,   color:'blue' },
+                { icon:<FaCheckCircle/>,   label:'Lunas',            value:paidBookings.length, color:'green' },
+                { icon:<FaUniversity/>,    label:'TF Menunggu',      value:awaitingTF.length, color:'yellow' },
+                { icon:<FaDoorOpen/>,      label:'Kamar Tersedia',   value:`${availableCount}/${rooms.length}`, color:'teal' },
+              ].map((s,i)=>(
+                <div key={i} className="stat-card">
+                  <div className={`stat-icon si-${s.color}`}>{s.icon}</div>
+                  <div className="stat-info">
+                    <span className="stat-label">{s.label}</span>
+                    <span className="stat-value">{s.value}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* ── Area Trend Chart ── */}
+            <div className="cc" style={{ position: 'relative' }}>
+              <div className="cc-hdr">
+                <h2 className="cc-title">Tren Pendapatan Harian (7 Hari Terakhir & Mendatang)</h2>
+                <div style={{ display: 'flex', gap: '15px', fontSize: '.75rem', fontWeight: 600 }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <span style={{ display: 'inline-block', width: '10px', height: '10px', background: 'var(--color-gold)', borderRadius: '50%' }}></span>
+                    Lunas
+                  </span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <span style={{ display: 'inline-block', width: '10px', height: '10px', background: '#3b82f6', borderRadius: '50%', border: '1px dashed #3b82f6' }}></span>
+                    Estimasi Total
+                  </span>
+                </div>
+              </div>
               
-              <div className="price-inputs-list">
-                {rooms.map(room => (
-                  <div key={room.id} className="price-input-row">
-                    <div className="room-info-cell">
-                      <strong>{room.name}</strong>
-                      <span>{formatIDR(room.price)} / malam saat ini</span>
-                    </div>
-                    <div className="input-group-cell">
-                      <span className="currency-prefix">Rp</span>
-                      <input 
-                        type="number" 
-                        value={room.price}
-                        onChange={(e) => handlePriceChange(room.id, e.target.value)}
-                        className="price-input-field"
+              <div style={{ position: 'relative', marginTop: '10px', overflowX: 'auto' }}>
+                <svg viewBox="0 0 800 220" width="100%" height="220" style={{ overflow: 'visible', minWidth: '700px' }}>
+                  <defs>
+                    <linearGradient id="paidAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="var(--color-gold)" stopOpacity="0.25" />
+                      <stop offset="100%" stopColor="var(--color-gold)" stopOpacity="0.0" />
+                    </linearGradient>
+                  </defs>
+                  
+                  {/* Grid Lines */}
+                  {[0, 0.25, 0.5, 0.75, 1].map((r, i) => {
+                    const y = paddingY + r * (chartHeight - paddingY - paddingBottom);
+                    const val = maxRevenueInTrend * (1 - r);
+                    return (
+                      <g key={i} opacity="0.4">
+                        <line x1={paddingX} y1={y} x2={chartWidth - paddingRight} y2={y} stroke="#e8e8e4" strokeWidth="1" />
+                        <text x={paddingX - 10} y={y + 4} fill="#888" fontSize="10" textAnchor="end">{formatIDR(val)}</text>
+                      </g>
+                    );
+                  })}
+                  
+                  {/* Area (Paid) */}
+                  {areaPaidPath && <path d={areaPaidPath} fill="url(#paidAreaGrad)" />}
+                  
+                  {/* Line (Paid) */}
+                  {linePaidPath && <path d={linePaidPath} fill="none" stroke="var(--color-gold)" strokeWidth="3" strokeLinecap="round" />}
+                  
+                  {/* Line (Total Expected) */}
+                  {lineTotalPath && <path d={lineTotalPath} fill="none" stroke="#3b82f6" strokeWidth="2" strokeDasharray="4,4" strokeLinecap="round" />}
+                  
+                  {/* Interactive guides & X-axis */}
+                  {points.map((p, i) => (
+                    <g key={i}>
+                      <line x1={p.x} y1={paddingY} x2={p.x} y2={chartHeight - paddingBottom} stroke="#e8e8e4" strokeWidth="1" strokeDasharray="2,2" opacity="0.4" />
+                      <text x={p.x} y={chartHeight - 12} fill="#6b7280" fontSize="10" fontWeight="600" textAnchor="middle">{p.label}</text>
+                      
+                      {/* Invisible hover helper */}
+                      <rect 
+                        x={p.x - 25} y={paddingY} width="50" height={chartHeight - paddingY - paddingBottom} 
+                        fill="transparent" 
+                        cursor="pointer"
+                        onMouseEnter={() => setHoveredPointIndex(i)}
+                        onMouseLeave={() => setHoveredPointIndex(null)}
                       />
+                    </g>
+                  ))}
+
+                  {/* Hover circle overlay */}
+                  {hoveredPointIndex !== null && points[hoveredPointIndex] && (
+                    <g pointerEvents="none">
+                      <line 
+                        x1={points[hoveredPointIndex].x} y1={paddingY} 
+                        x2={points[hoveredPointIndex].x} y2={chartHeight - paddingBottom} 
+                        stroke="var(--color-gold)" strokeWidth="1.5" opacity="0.6" 
+                      />
+                      <circle 
+                        cx={points[hoveredPointIndex].x} cy={points[hoveredPointIndex].yPaid} 
+                        r="6" fill="var(--color-gold)" stroke="white" strokeWidth="2" 
+                      />
+                      <circle 
+                        cx={points[hoveredPointIndex].x} cy={points[hoveredPointIndex].yTotal} 
+                        r="4" fill="#3b82f6" stroke="white" strokeWidth="1.5" 
+                      />
+                      {/* SVG Tooltip */}
+                      {(() => {
+                        if (hoveredPointIndex === null || !points[hoveredPointIndex]) return null;
+                        const pX = points[hoveredPointIndex].x;
+                        const tooltipRectX = Math.max(10, Math.min(620, pX - 85));
+                        const textX = tooltipRectX + 85;
+                        const tooltipY = Math.max(10, Math.min(140, Math.min(points[hoveredPointIndex].yPaid, points[hoveredPointIndex].yTotal) - 80));
+                        
+                        return (
+                          <g pointerEvents="none" style={{ transition: 'all 0.1s ease-out' }}>
+                            {/* Tooltip Background */}
+                            <rect
+                              x={tooltipRectX}
+                              y={tooltipY}
+                              width="170"
+                              height="70"
+                              rx="8"
+                              fill="rgba(10, 37, 64, 0.96)"
+                              stroke="var(--color-gold)"
+                              strokeWidth="1.5"
+                            />
+                            {/* Title: Date */}
+                            <text
+                              x={textX}
+                              y={tooltipY + 20}
+                              textAnchor="middle"
+                              fill="var(--color-gold)"
+                              style={{ fontSize: '10px', fontWeight: '700' }}
+                            >
+                              {points[hoveredPointIndex].label}
+                            </text>
+                            {/* Lunas label */}
+                            <text
+                              x={textX - 70}
+                              y={tooltipY + 40}
+                              textAnchor="start"
+                              fill="white"
+                              style={{ fontSize: '9px' }}
+                            >
+                              ✓ Lunas:
+                            </text>
+                            {/* Lunas value */}
+                            <text
+                              x={textX + 70}
+                              y={tooltipY + 40}
+                              textAnchor="end"
+                              fill="var(--color-gold)"
+                              style={{ fontSize: '9px', fontWeight: '700' }}
+                            >
+                              {formatIDR(points[hoveredPointIndex].paidRev)}
+                            </text>
+                            {/* Total label */}
+                            <text
+                              x={textX - 70}
+                              y={tooltipY + 56}
+                              textAnchor="start"
+                              fill="white"
+                              style={{ fontSize: '9px' }}
+                            >
+                              📊 Total:
+                            </text>
+                            {/* Total value */}
+                            <text
+                              x={textX + 70}
+                              y={tooltipY + 56}
+                              textAnchor="end"
+                              fill="#93c5fd"
+                              style={{ fontSize: '9px', fontWeight: '700' }}
+                            >
+                              {formatIDR(points[hoveredPointIndex].totalRev)}
+                            </text>
+                          </g>
+                        );
+                      })()}
+                    </g>
+                  )}
+                </svg>
+              </div>
+            </div>
+
+            {/* Two column */}
+            <div className="two-col">
+              {/* Revenue & Volume per Tipe Kamar */}
+              <div className="cc">
+                <div className="cc-hdr">
+                  <h2 className="cc-title">Revenue & Volume per Tipe Kamar</h2>
+                </div>
+                <div className="revenue-widget-split">
+                  {/* Left Column: Progress Bars */}
+                  <div className="rev-progress-col">
+                    <h3 style={{ fontSize: '.78rem', color: '#6b7280', marginBottom: '12px', fontWeight: 600 }}>Nilai Transaksi Lunas</h3>
+                    {revenueByType.map(item => (
+                      <div key={item.name} style={{ marginBottom: '12px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '.8rem', marginBottom: '4px' }}>
+                          <span style={{ color: '#374151', fontWeight: 600 }}>{item.name}</span>
+                          <span style={{ fontWeight: 700, color: '#b45309' }}>{formatIDR(item.revenue)}</span>
+                        </div>
+                        <div style={{ height: '8px', background: '#f0ede8', borderRadius: '10px', overflow: 'hidden' }}>
+                          <div style={{ height: '100%', width: `${Math.round((item.revenue / maxRev) * 100)}%`, background: 'linear-gradient(90deg,var(--color-gold),#d4a84b)', borderRadius: '10px', transition: 'width .6s ease' }}></div>
+                        </div>
+                        <span style={{ fontSize: '.68rem', color: '#9ca3af' }}>{item.count} booking lunas</span>
+                      </div>
+                    ))}
+                    {confirmedRevenue === 0 && (
+                      <div className="empty-state" style={{ padding: '20px 0' }}>
+                        <p style={{ fontSize: '.8rem' }}>Belum ada booking yang dikonfirmasi Lunas.</p>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Right Column: Donut Chart */}
+                  <div className="rev-donut-col">
+                    <h3 style={{ fontSize: '.78rem', color: '#6b7280', marginBottom: '12px', fontWeight: 600, textAlign: 'center' }}>Volume Transaksi Aktif</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', position: 'relative' }}>
+                      <div style={{ position: 'relative', width: '100px', height: '100px' }}>
+                        <svg viewBox="0 0 160 160" width="100" height="100">
+                          <circle cx="80" cy="80" r="50" fill="none" stroke="#f0ede8" strokeWidth="14" />
+                          {donutCircles.map((c, i) => (
+                            <circle
+                              key={i}
+                              cx="80"
+                              cy="80"
+                              r="50"
+                              fill="none"
+                              stroke={c.color}
+                              strokeWidth="14"
+                              strokeDasharray={c.strokeDasharray}
+                              strokeDashoffset={c.strokeDashoffset}
+                              transform="rotate(-90 80 80)"
+                              strokeLinecap={c.percentage > 0 ? "round" : "butt"}
+                              style={{ transition: 'stroke-dashoffset 0.5s ease' }}
+                            />
+                          ))}
+                          <circle cx="80" cy="80" r="40" fill="white" />
+                          <text x="80" y="83" textAnchor="middle" fontSize="13" fontWeight="800" fill="var(--color-blue-deep)">
+                            {totalBookingsCount}
+                          </text>
+                          <text x="80" y="94" textAnchor="middle" fontSize="8" fill="#888" style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            Total
+                          </text>
+                        </svg>
+                      </div>
+                      
+                      <div className="donut-legend" style={{ width: '100%' }}>
+                        {donutCircles.map((c, i) => (
+                          <div key={i} className="donut-legend-item" style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                            <span className="legend-dot" style={{ backgroundColor: c.color, width: '8px', height: '8px', borderRadius: '50%', display: 'inline-block' }}></span>
+                            <span className="legend-text" style={{ fontSize: '0.7rem', color: '#555' }}>
+                              <strong>{c.count}</strong> {c.name.split(' ')[0]} ({Math.round(c.percentage)}%)
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
 
-              <button onClick={handleSavePrices} className="btn-gold save-btn">
-                <FaSave /> Simpan Perubahan Harga
-              </button>
-            </div>
-          </div>
-
-          <div className="owner-col-right">
-            <div className="dashboard-card">
-              <h2>Aktivitas Pemesanan Terkini</h2>
-              {bookings.length === 0 ? (
-                <p style={{ color: 'var(--color-text-light)', textAlign: 'center', padding: '20px 0' }}>Belum ada booking masuk.</p>
-              ) : (
-                <div className="bookings-summary-list">
-                  {bookings.map((booking, idx) => (
-                    <div key={idx} className="booking-summary-item">
-                      <div className="booking-item-header">
-                        <strong>{booking.bookingCode || ('ARC-' + Math.floor(100000 + Math.random()*900000))}</strong>
-                        <span className="booking-item-revenue">{formatIDR(booking.totalRevenue || 0)}</span>
-                      </div>
-                      <div className="booking-item-body">
-                        <p>Tamu: {booking.guestName}</p>
-                        <p>{booking.roomType} • {booking.nights} Malam</p>
-                        <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
-                          <div>
-                            <span style={{
-                              fontSize: '0.72rem',
-                              fontWeight: 600,
-                              padding: '2px 8px',
-                              borderRadius: '12px',
-                              background: booking.paymentStatus === 'Paid' ? '#f0f9eb' : booking.paymentStatus === 'Pay at Hotel' ? '#fdf6ec' : '#fef0f0',
-                              color: booking.paymentStatus === 'Paid' ? '#67c23a' : booking.paymentStatus === 'Pay at Hotel' ? '#e6a23c' : '#f56c6c',
-                              border: `1px solid ${booking.paymentStatus === 'Paid' ? '#c2e7b0' : booking.paymentStatus === 'Pay at Hotel' ? '#f5dab1' : '#fde2e2'}`
-                            }}>
-                              {booking.paymentStatus === 'Paid' ? '✓ Lunas' : booking.paymentStatus === 'Pay at Hotel' ? '⏳ Bayar di Hotel' : '⚠ Belum Bayar'}
-                            </span>
-                            {booking.paymentMethod && (
-                              <span style={{ fontSize: '0.7rem', color: 'var(--color-text-light)', marginLeft: '6px' }}>{booking.paymentMethod}</span>
-                            )}
-                          </div>
-                          <div style={{ display: 'flex', gap: '6px' }}>
-                            {booking.paymentStatus !== 'Paid' && (
-                              <button 
-                                onClick={() => handleMarkAsPaid(booking.bookingCode)}
-                                style={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  padding: '4px 8px',
-                                  fontSize: '0.7rem',
-                                  fontWeight: '600',
-                                  color: 'white',
-                                  backgroundColor: '#2ecc71',
-                                  border: 'none',
-                                  borderRadius: '4px',
-                                  cursor: 'pointer',
-                                  transition: 'background-color 0.2s'
-                                }}
-                              >
-                                Lunas
-                              </button>
-                            )}
-                            <button 
-                              onClick={() => handleCancelBooking(booking.bookingCode)}
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                padding: '4px 8px',
-                                fontSize: '0.7rem',
-                                fontWeight: '600',
-                                color: 'white',
-                                backgroundColor: '#e74c3c',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                transition: 'background-color 0.2s'
-                              }}
-                            >
-                              Batal
-                            </button>
-                          </div>
+              {/* TF needing confirmation */}
+              <div className="cc">
+                <div className="cc-hdr">
+                  <h2 className="cc-title">Transfer Bank — Perlu Konfirmasi</h2>
+                  <button className="view-all" onClick={() => setActiveNav('bookings')}>Lihat Semua →</button>
+                </div>
+                {awaitingTF.length === 0 ? (
+                  <div className="empty-state"><p>Tidak ada Transfer Bank yang menunggu konfirmasi.</p></div>
+                ) : (
+                  <div style={{display:'flex',flexDirection:'column',gap:'10px'}}>
+                    {awaitingTF.map((b,i) => (
+                      <div key={i} className="quick-item">
+                        <div>
+                          <span className="code-badge" style={{fontSize:'.68rem'}}><FaTicketAlt /> {b.bookingCode}</span>
+                          <p style={{margin:'6px 0 2px',fontWeight:600,fontSize:'.88rem',color:'var(--color-blue-deep)'}}>{b.guestName}</p>
+                          {b.roomNumber && <p style={{margin:'0 0 2px',fontSize:'.75rem',color:'#6b7280'}}>Kamar {b.roomNumber} — {b.roomType}</p>}
+                          <p style={{margin:0,fontSize:'.75rem',color:'#6b7280'}}>{b.paymentMethod} · {b.nights} malam</p>
+                        </div>
+                        <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:'8px'}}>
+                          <span style={{fontWeight:700,color:'#b45309',fontSize:'.92rem'}}>{formatIDR(getRevenue(b))}</span>
+                          <button onClick={() => handleMarkAsPaid(b.bookingCode)} className="btn-paid">
+                            <FaCheck /> Konfirmasi Lunas
+                          </button>
                         </div>
                       </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Room mini grid */}
+            <div className="cc">
+              <div className="cc-hdr">
+                <h2 className="cc-title">Status 18 Kamar</h2>
+                <span style={{fontSize:'.8rem',color:'#6b7280'}}>{availableCount} tersedia · {occupiedCount} terpesan</span>
+              </div>
+              <div className="room-grid-mini">
+                {rooms.map(room => {
+                  const bk = getRoomBooking(room);
+                  return (
+                    <div key={room.roomNumber} className={`rgm-card ${bk?'rgm-occ':'rgm-avail'}`}>
+                      <span className="rgm-num">{room.roomNumber}</span>
+                      <span className="rgm-type">{room.name==='Economy Room'?'ECO':room.name==='Standard Room'?'STD':'VIP'}</span>
+                      <span className={`rgm-dot ${bk?'dot-red':'dot-green'}`}></span>
                     </div>
-                  ))}
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── BOOKING LIST ── */}
+        {activeNav === 'bookings' && (
+          <div className="cs">
+            <div className="page-hdr">
+              <div>
+                <h1 className="pg-title">Booking List</h1>
+                <p className="pg-sub">Semua pemesanan. Owner mengkonfirmasi <strong>Transfer Bank</strong>. Staff mengkonfirmasi <strong>Cash</strong>.</p>
+              </div>
+              <button className="refresh-btn" onClick={reloadAll}>↻ Refresh</button>
+            </div>
+
+            {/* Revenue summary bar */}
+            <div className="rev-summary-bar">
+              <div className="rsb-item">
+                <span className="rsb-label">✓ Revenue Dikonfirmasi</span>
+                <span className="rsb-val rsb-green">{formatIDR(confirmedRevenue)}</span>
+              </div>
+              <div className="rsb-sep"></div>
+              <div className="rsb-item">
+                <span className="rsb-label">🔄 Pending TF</span>
+                <span className="rsb-val rsb-blue">{formatIDR(pendingTFRevenue)}</span>
+              </div>
+              <div className="rsb-sep"></div>
+              <div className="rsb-item">
+                <span className="rsb-label">⏳ Bayar Hotel</span>
+                <span className="rsb-val rsb-orange">{formatIDR(pendingCashRevenue)}</span>
+              </div>
+              <div className="rsb-sep"></div>
+              <div className="rsb-item">
+                <span className="rsb-label">📊 Total Estimasi</span>
+                <span className="rsb-val rsb-gold">{formatIDR(totalExpected)}</span>
+              </div>
+            </div>
+
+            <div className="cc">
+              <div className="cc-hdr">
+                <h2 className="cc-title">Semua Booking <span className="badge-cnt">{bookings.length}</span></h2>
+              </div>
+              {bookings.length === 0 ? (
+                <div className="empty-state"><FaListAlt style={{fontSize:'2rem',color:'var(--color-gold)',marginBottom:'10px'}}/><p>Belum ada booking masuk.</p></div>
+              ) : (
+                <div className="table-responsive">
+                  <table className="dt">
+                    <thead><tr>
+                      <th>Kode Booking</th><th>Nama Tamu</th><th>Telepon</th><th>Domisili</th>
+                      <th>No. Kamar</th><th>Tipe</th><th>Check-in</th><th>Check-out</th>
+                      <th>Durasi</th><th>Tamu</th><th>Drink</th><th>Metode</th>
+                      <th>Status</th><th>Revenue</th><th>Aksi</th>
+                    </tr></thead>
+                    <tbody>
+                      {bookings.map((b,i) => {
+                        const canConfirm = b.paymentStatus !== 'Paid' && b.paymentStatus !== 'Cancelled';
+                        const revenue = getRevenue(b);
+                        return (
+                          <tr key={b.bookingCode||i}>
+                            <td><span className="code-badge"><FaTicketAlt /> {b.bookingCode}</span></td>
+                            <td><strong>{b.guestName}</strong></td>
+                            <td style={{fontSize:'.8rem'}}>{b.phoneNumber||'-'}</td>
+                            <td style={{fontSize:'.8rem'}}>{b.domicile||'-'}</td>
+                            <td>{b.roomNumber ? <span className="room-num-badge">{b.roomNumber}</span> : '-'}</td>
+                            <td><span className="room-tag">{b.roomType}</span></td>
+                            <td className="date-cell">{formatDate(b.checkIn)}</td>
+                            <td className="date-cell">{formatDate(b.checkOut)}</td>
+                            <td><span className="dur-badge">{b.nights} Mlm</span></td>
+                            <td style={{fontSize:'.82rem'}}>{b.guestsCount} Org</td>
+                            <td><span className="drink-tag">{b.welcomeDrink}</span></td>
+                            <td style={{fontSize:'.75rem',maxWidth:'120px'}}>{b.paymentMethod||'-'}</td>
+                            <td>
+                              <span className={`pill ${b.paymentStatus==='Paid'?'pill-g':b.paymentStatus==='Pay at Hotel'?'pill-o':b.paymentStatus==='Awaiting Confirmation'?'pill-b':'pill-r'}`}>
+                                {b.paymentStatus==='Paid'?'✓ Lunas':b.paymentStatus==='Pay at Hotel'?'⏳ Bayar Hotel':b.paymentStatus==='Awaiting Confirmation'?'🔄 Menunggu':'⚠ Belum Bayar'}
+                              </span>
+                              {b.confirmedBy && <div style={{fontSize:'.62rem',color:'#9ca3af',marginTop:'2px'}}>oleh {b.confirmedBy}</div>}
+                            </td>
+                            <td>
+                              <strong style={{color:b.paymentStatus==='Paid'?'#16a34a':'#6b7280',fontSize:'.84rem',whiteSpace:'nowrap'}}>
+                                {formatIDR(revenue)}
+                              </strong>
+                            </td>
+                            <td>
+                              <div style={{display:'flex',gap:'5px',flexWrap:'wrap'}}>
+                                {canConfirm && (
+                                  <button onClick={() => handleMarkAsPaid(b.bookingCode)} className="btn-paid" title="Konfirmasi Lunas">
+                                    <FaCheck /> Konfirmasi
+                                  </button>
+                                )}
+                                <button onClick={() => handleCancelBooking(b.bookingCode)} className="btn-cancel" title="Batalkan">
+                                  <FaTrash />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </div>
           </div>
-        </div>
+        )}
+
+        {/* ── REVENUE ANALYTICS ── */}
+        {activeNav === 'analytics' && (
+          <div className="cs">
+            <div className="page-hdr">
+              <div>
+                <h1 className="pg-title">Revenue & Analitik</h1>
+                <p className="pg-sub">Laporan keuangan Hotel Arca.</p>
+              </div>
+              <button className="refresh-btn" onClick={reloadAll}>↻ Refresh</button>
+            </div>
+
+            {/* Revenue hero card */}
+            <div className="rev-hero">
+              <div style={{display:'flex',alignItems:'center',gap:'20px'}}>
+                <FaMoneyBillWave style={{fontSize:'2.8rem',color:'var(--color-gold)'}} />
+                <div>
+                  <p style={{fontSize:'.8rem',color:'rgba(255,255,255,.6)',marginBottom:'4px',textTransform:'uppercase',letterSpacing:'.5px'}}>Revenue Terkonfirmasi</p>
+                  <p style={{fontSize:'2.2rem',fontWeight:800,color:'var(--color-gold)',lineHeight:1}}>{formatIDR(confirmedRevenue)}</p>
+                  <p style={{fontSize:'.75rem',color:'rgba(255,255,255,.5)',marginTop:'4px'}}>Estimasi total semua booking: {formatIDR(totalExpected)}</p>
+                </div>
+              </div>
+              <div style={{display:'flex',flexWrap:'wrap',gap:'8px'}}>
+                <span className="rev-pill rp-green">✓ Lunas: {paidBookings.length}</span>
+                <span className="rev-pill rp-blue">🔄 TF Pending: {awaitingTF.length}</span>
+                <span className="rev-pill rp-orange">⏳ Bayar Hotel: {payHotel.length}</span>
+                <span className="rev-pill rp-red">⚠ Belum Bayar: {awaiting.length}</span>
+              </div>
+            </div>
+
+            {/* Revenue cards */}
+            <div className="rev-cards-row" style={{marginBottom:'24px'}}>
+              <div className="rev-card rev-confirmed">
+                <div className="rc-top"><FaCheckCircle className="rc-icon" /><span className="rc-label">Terkonfirmasi</span></div>
+                <div className="rc-value">{formatIDR(confirmedRevenue)}</div>
+                <div className="rc-sub">{paidBookings.length} booking</div>
+              </div>
+              <div className="rev-card rev-pending-tf">
+                <div className="rc-top"><FaUniversity className="rc-icon" /><span className="rc-label">TF Pending</span></div>
+                <div className="rc-value">{formatIDR(pendingTFRevenue)}</div>
+                <div className="rc-sub">{awaitingTF.length} booking</div>
+              </div>
+              <div className="rev-card rev-pending-cash">
+                <div className="rc-top"><FaMoneyBillWave className="rc-icon" /><span className="rc-label">Cash Pending</span></div>
+                <div className="rc-value">{formatIDR(pendingCashRevenue)}</div>
+                <div className="rc-sub">{payHotel.length} booking</div>
+              </div>
+              <div className="rev-card rev-total">
+                <div className="rc-top"><FaChartLine className="rc-icon" /><span className="rc-label">Estimasi Total</span></div>
+                <div className="rc-value">{formatIDR(totalExpected)}</div>
+                <div className="rc-sub">Semua booking aktif</div>
+              </div>
+            </div>
+
+            {/* Revenue per type */}
+            <div className="cc">
+              <div className="cc-hdr"><h2 className="cc-title">Revenue per Tipe Kamar (Booking Lunas)</h2></div>
+              {revenueByType.map(item => (
+                <div key={item.name} style={{marginBottom:'18px'}}>
+                  <div style={{display:'flex',justifyContent:'space-between',fontSize:'.92rem',marginBottom:'7px'}}>
+                    <span style={{color:'#374151',fontWeight:600}}>{item.name}</span>
+                    <div style={{display:'flex',gap:'12px',alignItems:'center'}}>
+                      <span style={{fontSize:'.75rem',color:'#9ca3af'}}>{item.count} booking</span>
+                      <span style={{fontWeight:800,color:'#b45309',fontSize:'1rem'}}>{formatIDR(item.revenue)}</span>
+                    </div>
+                  </div>
+                  <div style={{height:'12px',background:'#f0ede8',borderRadius:'10px',overflow:'hidden'}}>
+                    <div style={{height:'100%',width:`${Math.round((item.revenue/maxRev)*100)}%`,background:'linear-gradient(90deg,var(--color-gold),#d4a84b)',borderRadius:'10px',transition:'width .6s ease',minWidth:item.revenue>0?'8px':0}}></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Paid bookings table */}
+            <div className="cc">
+              <div className="cc-hdr"><h2 className="cc-title">Daftar Booking Lunas <span className="badge-cnt">{paidBookings.length}</span></h2></div>
+              {paidBookings.length === 0 ? (
+                <div className="empty-state"><p>Belum ada booking yang dikonfirmasi Lunas.</p></div>
+              ) : (
+                <div className="table-responsive">
+                  <table className="dt">
+                    <thead><tr>
+                      <th>Kode</th><th>Tamu</th><th>No. Kamar</th><th>Tipe</th>
+                      <th>Check-in</th><th>Check-out</th><th>Durasi</th>
+                      <th>Metode</th><th>Revenue</th><th>Tgl Lunas</th><th>Dikonfirmasi</th>
+                    </tr></thead>
+                    <tbody>
+                      {paidBookings.map((b,i) => (
+                        <tr key={b.bookingCode||i}>
+                          <td><span className="code-badge"><FaTicketAlt /> {b.bookingCode}</span></td>
+                          <td><strong>{b.guestName}</strong></td>
+                          <td>{b.roomNumber ? <span className="room-num-badge">{b.roomNumber}</span> : '-'}</td>
+                          <td><span className="room-tag">{b.roomType}</span></td>
+                          <td className="date-cell">{formatDate(b.checkIn)}</td>
+                          <td className="date-cell">{formatDate(b.checkOut)}</td>
+                          <td><span className="dur-badge">{b.nights} Mlm</span></td>
+                          <td style={{fontSize:'.75rem'}}>{b.paymentMethod||'-'}</td>
+                          <td><strong style={{color:'#16a34a',fontSize:'.88rem'}}>{formatIDR(getRevenue(b))}</strong></td>
+                          <td className="date-cell">{b.paidAt ? formatDate(b.paidAt) : '-'}</td>
+                          <td><span className={`pill ${b.confirmedBy==='owner'?'pill-b':'pill-o'}`} style={{fontSize:'.68rem'}}>{b.confirmedBy||'staff'}</span></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── ROOM PRICING ── */}
+        {activeNav === 'pricing' && (
+          <div className="cs">
+            <div className="page-hdr">
+              <div>
+                <h1 className="pg-title">Kelola Harga Kamar</h1>
+                <p className="pg-sub">Ubah harga per malam untuk setiap tipe kamar. Perubahan langsung tersinkron ke halaman booking.</p>
+              </div>
+            </div>
+            {/* Group by type for pricing */}
+            {['Economy Room','Standard Room','VIP Suite'].map(typeName => {
+              const typeRooms = rooms.filter(r => r.name === typeName);
+              if (!typeRooms.length) return null;
+              const firstRoom = typeRooms[0];
+              return (
+                <div key={typeName} className="cc" style={{maxWidth:'600px',marginBottom:'20px'}}>
+                  <div className="cc-hdr">
+                    <h2 className="cc-title">{typeName} ({typeRooms.length} kamar)</h2>
+                  </div>
+                  <p style={{fontSize:'.82rem',color:'#6b7280',marginBottom:'16px'}}>
+                    Kamar: {typeRooms.map(r=>r.roomNumber).join(', ')}
+                  </p>
+                  <div className="price-row">
+                    <div>
+                      <strong style={{display:'block',color:'var(--color-blue-deep)',marginBottom:'3px'}}>Harga per Malam</strong>
+                      <span style={{fontSize:'.8rem',color:'#6b7280'}}>Berlaku untuk semua kamar tipe {typeName}</span>
+                    </div>
+                    <div className="price-input-group">
+                      <span className="currency-prefix">Rp</span>
+                      <input
+                        type="number"
+                        value={firstRoom.price}
+                        onChange={(e) => {
+                          const newPrice = Number(e.target.value);
+                          setRooms(prev => prev.map(r => r.name === typeName ? {...r, price: newPrice} : r));
+                        }}
+                        className="price-input"
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            <button onClick={handleSavePrices} className="save-btn">
+              <FaSave /> Simpan Semua Harga
+            </button>
+          </div>
+        )}
+
+        {/* ── SETTINGS ── */}
+        {activeNav === 'settings' && (
+          <div className="cs">
+            <div className="page-hdr"><div>
+              <h1 className="pg-title">Pengaturan</h1>
+              <p className="pg-sub">Informasi akun portal owner.</p>
+            </div></div>
+            <div className="cc" style={{maxWidth:'480px'}}>
+              <h2 className="cc-title" style={{marginBottom:'20px'}}>Informasi Akun</h2>
+              {[['Nama',currentUser?.name||'Owner'],['Email',currentUser?.email||'owner@arca.com'],['Role','Owner']].map(([l,v])=>(
+                <div key={l} className="set-row"><span>{l}</span><strong>{v}</strong></div>
+              ))}
+              <button onClick={() => { localStorage.removeItem('currentUser'); window.location.href='/owner/login'; }}
+                style={{marginTop:'24px',background:'#ef4444',color:'white',border:'none',padding:'11px 22px',borderRadius:'8px',fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',gap:'8px'}}>
+                <FaSignOutAlt /> Logout
+              </button>
+            </div>
+          </div>
+        )}
       </main>
 
       <style jsx>{`
-        .dashboard-page {
-          min-height: 100vh;
-          background-color: #f7f6f5;
-          font-family: 'Inter', sans-serif;
+        /* Chart Styles */
+        .revenue-widget-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; align-items: start; }
+        .rev-progress-col { display: flex; flex-direction: column; }
+        .rev-donut-col { display: flex; flex-direction: column; border-left: 1px solid #f0ede8; padding-left: 20px; }
+        .donut-legend { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; }
+        .donut-legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; }
+        .legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+        .legend-text { color: #4b5563; font-size: 0.72rem; }
+        
+        .chart-tooltip {
+          animation: tooltipFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        @keyframes tooltipFadeIn {
+          from { opacity: 0; transform: translate(-50%, 4px); }
+          to { opacity: 1; transform: translate(-50%, 0); }
         }
 
-        .dashboard-header {
-          background-color: var(--color-blue-deep);
-          color: white;
-          padding: 20px 5%;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
+        @media(max-width: 900px) {
+          .revenue-widget-split { grid-template-columns: 1fr; gap: 20px; }
+          .rev-donut-col { border-left: none; padding-left: 0; border-top: 1px solid #f0ede8; padding-top: 16px; }
         }
 
-        .header-brand h1 {
-          font-family: var(--font-title);
-          font-size: 1.8rem;
-          margin-top: 5px;
-        }
-
-        .back-link-home {
-          font-size: 0.85rem;
-          color: rgba(255, 255, 255, 0.7);
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          transition: var(--transition-smooth);
-        }
-
-        .back-link-home:hover {
-          color: var(--color-gold);
-        }
-
-        .btn-logout {
-          background: none;
-          border: 1px solid rgba(255, 255, 255, 0.4);
-          color: white;
-          padding: 8px 16px;
-          border-radius: var(--radius-sm);
-          cursor: pointer;
-          font-weight: 600;
-          font-size: 0.9rem;
-          transition: var(--transition-smooth);
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .btn-logout:hover {
-          background-color: #c0392b;
-          border-color: #c0392b;
-        }
-
-        .dashboard-main {
-          max-width: 1200px;
-          margin: 40px auto;
-          padding: 0 20px;
-          position: relative;
-        }
-
-        /* Revenue summary card */
-        .revenue-summary-card {
-          background: linear-gradient(135deg, var(--color-blue-deep) 0%, #061924 100%);
-          color: white;
-          padding: 30px;
-          border-radius: var(--radius-md);
-          display: flex;
-          align-items: center;
-          gap: 30px;
-          box-shadow: var(--shadow-md);
-          margin-bottom: 40px;
-        }
-
-        .revenue-icon-box {
-          font-size: 3.5rem;
-          color: var(--color-gold);
-          display: flex;
-          align-items: center;
-        }
-
-        .revenue-text-box h2 {
-          font-family: var(--font-title);
-          font-size: 1.4rem;
-          font-weight: 500;
-          color: rgba(255,255,255,0.8);
-          margin-bottom: 8px;
-        }
-
-        .revenue-val {
-          font-size: 2.5rem;
-          font-weight: 700;
-          color: var(--color-gold-hover);
-          margin-bottom: 8px;
-        }
-
-        .revenue-sub {
-          font-size: 0.85rem;
-          color: rgba(255, 255, 255, 0.6);
-        }
-
-        /* Layout Grid */
-        .owner-grid {
-          display: grid;
-          grid-template-columns: 1.2fr 0.8fr;
-          gap: 30px;
-        }
-
-        @media (max-width: 900px) {
-          .owner-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        .dashboard-card {
-          background-color: white;
-          padding: 30px;
-          border-radius: var(--radius-md);
-          box-shadow: var(--shadow-sm);
-          border: 1px solid var(--color-border);
-        }
-
-        .dashboard-card h2 {
-          font-family: var(--font-title);
-          color: var(--color-blue-deep);
-          font-size: 1.5rem;
-          margin-bottom: 20px;
-          border-bottom: 2px solid var(--color-border);
-          padding-bottom: 12px;
-        }
-
-        /* Price inputs */
-        .price-inputs-list {
-          display: flex;
-          flex-direction: column;
-          gap: 15px;
-          margin-bottom: 30px;
-        }
-
-        .price-input-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 15px;
-          background-color: var(--color-sand-light);
-          border: 1px solid var(--color-border);
-          border-radius: var(--radius-sm);
-        }
-
-        .room-info-cell strong {
-          display: block;
-          font-size: 1.1rem;
-          color: var(--color-blue-deep);
-          margin-bottom: 4px;
-        }
-
-        .room-info-cell span {
-          font-size: 0.85rem;
-          color: var(--color-text-light);
-        }
-
-        .input-group-cell {
-          display: flex;
-          align-items: center;
-          background-color: white;
-          border: 1px solid var(--color-sand-dark);
-          border-radius: var(--radius-sm);
-          padding: 0 10px;
-        }
-
-        .currency-prefix {
-          font-weight: 600;
-          color: var(--color-text-light);
-          font-size: 0.9rem;
-        }
-
-        .price-input-field {
-          border: none;
-          padding: 10px;
-          font-size: 0.95rem;
-          font-weight: 600;
-          color: var(--color-text-dark);
-          width: 120px;
-          outline: none;
-          text-align: right;
-        }
-
-        .save-btn {
-          width: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
-          padding: 14px;
-          font-size: 1rem;
-          font-weight: 600;
-        }
-
-        /* Bookings summary */
-        .bookings-summary-list {
-          display: flex;
-          flex-direction: column;
-          gap: 15px;
-        }
-
-        .booking-summary-item {
-          border-bottom: 1px solid var(--color-border);
-          padding-bottom: 15px;
-        }
-
-        .booking-summary-item:last-child {
-          border-bottom: none;
-          padding-bottom: 0;
-        }
-
-        .booking-item-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 6px;
-        }
-
-        .booking-item-header strong {
-          color: var(--color-blue-deep);
-        }
-
-        .booking-item-revenue {
-          color: #67c23a;
-          font-weight: 700;
-          font-size: 0.95rem;
-        }
-
-        .booking-item-body {
-          font-size: 0.85rem;
-          color: var(--color-text-light);
-          line-height: 1.4;
-        }
-
+        /* Layout */
+        .portal-layout{display:flex;min-height:100vh;font-family:'Inter',sans-serif;background:#f5f5f4}
+        /* Sidebar */
+        .sidebar{width:220px;min-width:220px;background:#fff;border-right:1px solid #e8e8e4;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;box-shadow:2px 0 12px rgba(0,0,0,.04)}
+        .sb-brand{display:flex;align-items:center;gap:12px;padding:24px 20px 20px;border-bottom:1px solid #f0ede8}
+        .sb-brand-text{display:flex;flex-direction:column;line-height:1.2}
+        .sb-portal{font-family:var(--font-title);font-size:1rem;font-weight:700;color:var(--color-gold);letter-spacing:.5px}
+        .sb-sub{font-size:.58rem;font-weight:500;color:#9ca3af;letter-spacing:1.5px;text-transform:uppercase}
+        .sb-nav{padding:20px 12px;flex:1;display:flex;flex-direction:column;gap:4px}
+        .nav-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;border:none;background:none;cursor:pointer;font-size:.88rem;font-weight:500;color:#6b7280;text-align:left;transition:all .18s;width:100%}
+        .nav-item:hover{background:#fdf8ed;color:var(--color-blue-deep)}
+        .nav-item.active{background:#fdf8ed;color:var(--color-gold);font-weight:600;border-left:3px solid var(--color-gold)}
+        .nav-icon{font-size:.95rem;width:18px;text-align:center;flex-shrink:0}
+        .sb-bottom{padding:16px;border-top:1px solid #f0ede8;display:flex;flex-direction:column;gap:8px}
+        .sb-link,.sb-logout{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:.84rem;font-weight:500;color:#6b7280;background:none;border:none;cursor:pointer;transition:all .18s;text-decoration:none;width:100%;text-align:left}
+        .sb-link:hover{background:#f0f9f0;color:#16a34a}.sb-logout:hover{background:#fef2f2;color:#ef4444}
+        .sb-avatar{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:#f9f8f6;margin-top:4px}
+        .av-circle{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--color-gold),#d4a84b);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.85rem;flex-shrink:0}
+        .av-info{display:flex;flex-direction:column;line-height:1.2;overflow:hidden}
+        .av-name{font-size:.82rem;font-weight:600;color:var(--color-blue-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .av-role{font-size:.68rem;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px}
+        /* Main */
+        .main-content{margin-left:220px;flex:1;min-height:100vh;min-width:0;width:calc(100% - 220px)}
+        .cs{padding:36px 40px}
+        .page-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
+        .pg-title{font-family:var(--font-title);font-size:1.85rem;color:var(--color-blue-deep);font-weight:700;margin-bottom:5px}
+        .pg-sub{color:#6b7280;font-size:.9rem}
+        .refresh-btn{background:#fff;border:1px solid #e8e8e4;color:var(--color-gold);padding:8px 16px;border-radius:8px;font-weight:600;font-size:.82rem;cursor:pointer;transition:all .2s}
+        .refresh-btn:hover{background:var(--color-gold);color:#fff}
+        /* Revenue Cards Row */
+        .rev-cards-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+        .rev-card{border-radius:14px;padding:20px;border:1px solid}
+        .rev-confirmed{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#bbf7d0}
+        .rev-pending-tf{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#bfdbfe}
+        .rev-pending-cash{background:linear-gradient(135deg,#fff7ed,#ffedd5);border-color:#fed7aa}
+        .rev-total{background:linear-gradient(135deg,#fdf8ed,#fef3c7);border-color:#fde68a}
+        .rc-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+        .rc-icon{font-size:1.1rem}
+        .rev-confirmed .rc-icon{color:#16a34a}
+        .rev-pending-tf .rc-icon{color:#3b82f6}
+        .rev-pending-cash .rc-icon{color:#ea580c}
+        .rev-total .rc-icon{color:#d97706}
+        .rc-label{font-size:.75rem;font-weight:600;color:#374151;text-transform:uppercase;letter-spacing:.5px}
+        .rc-value{font-size:1.3rem;font-weight:800;color:#111827;margin-bottom:4px;line-height:1}
+        .rc-sub{font-size:.72rem;color:#6b7280}
+        /* Stats */
+        .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:24px}
+        .stat-card{background:#fff;border-radius:14px;padding:20px;display:flex;align-items:center;gap:14px;border:1px solid #e8e8e4;box-shadow:0 2px 8px rgba(0,0,0,.03);transition:box-shadow .2s}
+        .stat-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07)}
+        .stat-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0}
+        .si-blue{background:#eff6ff;color:#3b82f6}.si-green{background:#f0fdf4;color:#16a34a}
+        .si-yellow{background:#fefce8;color:#ca8a04}.si-teal{background:#f0fdfa;color:#0d9488}
+        .stat-info{display:flex;flex-direction:column;gap:3px}
+        .stat-label{font-size:.78rem;color:#6b7280;font-weight:500}
+        .stat-value{font-size:1.7rem;font-weight:700;color:var(--color-blue-deep);line-height:1}
+        /* Two col */
+        .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:22px}
+        /* Content Card */
+        .cc{background:#fff;border-radius:14px;padding:26px;border:1px solid #e8e8e4;box-shadow:0 2px 8px rgba(0,0,0,.03);margin-bottom:22px}
+        .cc-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid #f0ede8}
+        .cc-title{font-family:var(--font-title);font-size:1.1rem;color:var(--color-blue-deep);font-weight:600}
+        .badge-cnt{background:var(--color-gold);color:#fff;font-size:.68rem;padding:2px 8px;border-radius:20px;font-weight:600;margin-left:8px}
+        .view-all{background:none;border:none;color:var(--color-gold);font-size:.84rem;font-weight:600;cursor:pointer}
+        /* Revenue summary bar */
+        .rev-summary-bar{display:flex;align-items:center;background:#fff;border:1px solid #e8e8e4;border-radius:12px;padding:16px 24px;margin-bottom:20px;gap:0}
+        .rsb-item{display:flex;flex-direction:column;gap:4px;flex:1;text-align:center}
+        .rsb-sep{width:1px;height:36px;background:#e8e8e4;flex-shrink:0}
+        .rsb-label{font-size:.72rem;color:#6b7280;font-weight:500}
+        .rsb-val{font-size:1rem;font-weight:800}
+        .rsb-green{color:#16a34a}.rsb-blue{color:#3b82f6}.rsb-orange{color:#ea580c}.rsb-gold{color:#b45309}
+        /* Room mini grid */
+        .room-grid-mini{display:grid;grid-template-columns:repeat(9,1fr);gap:8px}
+        .rgm-card{border-radius:8px;padding:8px 6px;text-align:center;border:1px solid;display:flex;flex-direction:column;align-items:center;gap:3px;transition:all .2s}
+        .rgm-avail{background:#f0fdf4;border-color:#bbf7d0}.rgm-occ{background:#fef2f2;border-color:#fecaca}
+        .rgm-num{font-weight:800;font-size:.9rem;color:var(--color-blue-deep);font-family:'Courier New',monospace}
+        .rgm-type{font-size:.55rem;color:#6b7280;text-transform:uppercase;letter-spacing:.5px}
+        .rgm-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+        .dot-green{background:#16a34a}.dot-red{background:#ef4444}
+        /* Quick confirm item */
+        .quick-item{display:flex;justify-content:space-between;align-items:flex-start;padding:14px;background:#fdf8ed;border:1px solid #f5e6c0;border-radius:10px;gap:12px}
+        /* Revenue hero */
+        .rev-hero{background:linear-gradient(135deg,var(--color-blue-deep),#061924);color:#fff;padding:28px 32px;border-radius:16px;display:flex;align-items:center;justify-content:space-between;gap:24px;box-shadow:0 8px 32px rgba(10,37,64,.2);margin-bottom:24px;flex-wrap:wrap}
+        .rev-pill{font-size:.74rem;font-weight:600;padding:5px 12px;border-radius:20px}
+        .rp-green{background:rgba(22,163,74,.2);color:#4ade80}
+        .rp-blue{background:rgba(59,130,246,.2);color:#93c5fd}
+        .rp-orange{background:rgba(234,88,12,.2);color:#fdba74}
+        .rp-red{background:rgba(239,68,68,.2);color:#fca5a5}
+        /* Pricing */
+        .price-row{display:flex;justify-content:space-between;align-items:center;padding:18px;background:#f9f8f6;border:1px solid #e8e8e4;border-radius:10px;gap:16px;margin-bottom:16px}
+        .price-input-group{display:flex;align-items:center;background:#fff;border:1px solid #d1d5db;border-radius:8px;padding:0 10px;overflow:hidden}
+        .currency-prefix{font-weight:600;color:#6b7280;font-size:.9rem;margin-right:4px}
+        .price-input{border:none;padding:10px 8px;font-size:.95rem;font-weight:600;color:var(--color-blue-deep);width:120px;outline:none;text-align:right;background:transparent}
+        .save-btn{display:inline-flex;align-items:center;gap:10px;padding:13px 26px;font-size:.93rem;font-weight:600;background:var(--color-gold);color:#fff;border:none;border-radius:10px;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(197,160,89,.3)}
+        .save-btn:hover{background:#b8983d;transform:translateY(-1px)}
+        /* Table */
+        .table-responsive{width:100%;overflow-x:auto;border-radius:8px}
+        .dt{width:100%;border-collapse:collapse;font-size:.83rem;min-width:1000px}
+        .dt th{background:#f9f8f6;color:#374151;font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;padding:10px 11px;text-align:left;border-bottom:2px solid #e8e8e4;white-space:nowrap}
+        .dt td{padding:11px;border-bottom:1px solid #f0ede8;color:#374151;vertical-align:middle}
+        .dt tr:hover td{background:#fdf8ed}.dt tr:last-child td{border-bottom:none}
+        /* Badges */
+        .code-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,var(--color-blue-deep),#1a5276);color:var(--color-gold);padding:4px 9px;border-radius:6px;font-size:.7rem;font-weight:700;font-family:'Courier New',monospace;white-space:nowrap}
+        .room-num-badge{display:inline-block;background:#fdf8ed;color:#b45309;border:1px solid #f5e6c0;padding:2px 7px;border-radius:5px;font-size:.75rem;font-weight:700;font-family:'Courier New',monospace;margin-right:3px}
+        .room-tag{background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe;padding:2px 8px;border-radius:5px;font-size:.72rem;font-weight:600;white-space:nowrap}
+        .date-cell{white-space:nowrap;font-size:.81rem}
+        .dur-badge{background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe;padding:2px 7px;border-radius:5px;font-size:.72rem;font-weight:600;white-space:nowrap}
+        .drink-tag{background:#fff7ed;color:#ea580c;border:1px solid #fed7aa;padding:2px 7px;border-radius:5px;font-size:.7rem;font-weight:500;white-space:nowrap}
+        .pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:.68rem;font-weight:600;white-space:nowrap}
+        .pill-g{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+        .pill-o{background:#fff7ed;color:#ea580c;border:1px solid #fed7aa}
+        .pill-b{background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe}
+        .pill-r{background:#fef2f2;color:#ef4444;border:1px solid #fecaca}
+        /* Action buttons */
+        .btn-paid{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;font-size:.72rem;font-weight:600;color:#fff;background:linear-gradient(135deg,#16a34a,#15803d);border:none;border-radius:6px;cursor:pointer;transition:all .2s;white-space:nowrap}
+        .btn-paid:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(22,163,74,.3)}
+        .btn-cancel{display:inline-flex;align-items:center;gap:4px;padding:5px 9px;font-size:.72rem;font-weight:600;color:#fff;background:linear-gradient(135deg,#ef4444,#dc2626);border:none;border-radius:6px;cursor:pointer;transition:all .2s}
+        .btn-cancel:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(239,68,68,.3)}
+        /* Empty / Settings */
+        .empty-state{padding:36px 20px;text-align:center;color:#9ca3af;background:#fafaf9;border-radius:10px;border:1px dashed #d1d5db}
+        .set-row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid #f0ede8;font-size:.9rem}
+        .set-row span:first-child{color:#6b7280}.set-row strong{color:var(--color-blue-deep)}
         /* Toast */
-        .toast-notification {
-          position: fixed;
-          top: 30px;
-          right: 30px;
-          background-color: rgba(10, 45, 66, 0.95);
-          backdrop-filter: blur(10px);
-          color: #fff;
-          padding: 16px 24px;
-          border-radius: var(--radius-md);
-          border: 1px solid var(--color-gold);
-          box-shadow: var(--shadow-lg);
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          z-index: 2000;
-          animation: slideInRight 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) both;
-        }
-
-        .toast-icon {
-          color: var(--color-gold);
-          font-size: 1.3rem;
-        }
-
-        @keyframes slideInRight {
-          from { transform: translateX(100%); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
-        }
+        .toast{position:fixed;top:22px;right:22px;background:rgba(10,37,64,.96);backdrop-filter:blur(10px);color:#fff;padding:13px 20px;border-radius:12px;border:1px solid var(--color-gold);box-shadow:0 8px 32px rgba(0,0,0,.2);display:flex;align-items:center;gap:10px;z-index:2000;font-size:.88rem;font-weight:500;animation:slideInR .3s both}
+        .toast-err{border-color:#ef4444;background:rgba(127,29,29,.95)}
+        @keyframes slideInR{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+        /* Responsive */
+        @media(max-width:1200px){.stats-grid{grid-template-columns:repeat(2,1fr)}.rev-cards-row{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}.room-grid-mini{grid-template-columns:repeat(6,1fr)}}
+        @media(max-width:768px){.main-content{margin-left:0;width:100%}.cs{padding:20px 16px}.stats-grid{grid-template-columns:1fr 1fr}.rev-summary-bar{flex-direction:column;gap:12px}.rsb-sep{display:none}.room-grid-mini{grid-template-columns:repeat(4,1fr)}}
       `}</style>
     </div>
   );

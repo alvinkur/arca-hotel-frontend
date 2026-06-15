@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { FaUser, FaEnvelope, FaLock, FaArrowLeft, FaConciergeBell, FaExclamationCircle } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaLock, FaArrowLeft, FaPhone, FaExclamationCircle } from 'react-icons/fa';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phoneNumber: '',
     password: '',
     confirmPassword: ''
   });
@@ -24,6 +25,7 @@ export default function LoginPage() {
     setFormData({
       name: '',
       email: '',
+      phoneNumber: '',
       password: '',
       confirmPassword: ''
     });
@@ -60,7 +62,12 @@ export default function LoginPage() {
       const customer = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
 
       if (customer) {
-        const customerUser = { name: customer.name, email: customer.email, role: 'customer' };
+        const customerUser = { 
+          name: customer.name, 
+          email: customer.email, 
+          phoneNumber: customer.phoneNumber || '',
+          role: 'customer' 
+        };
         localStorage.setItem('currentUser', JSON.stringify(customerUser));
         setSuccessMsg(`Selamat datang kembali, ${customer.name}!`);
         setTimeout(() => router.push('/'), 1000);
@@ -70,10 +77,16 @@ export default function LoginPage() {
 
     } else {
       // --- REGISTER LOGIC ---
-      const { name, email, password, confirmPassword } = formData;
+      const { name, email, phoneNumber, password, confirmPassword } = formData;
 
-      if (!name || !email || !password || !confirmPassword) {
+      if (!name || !email || !phoneNumber || !password || !confirmPassword) {
         setErrorMsg('Semua kolom wajib diisi.');
+        return;
+      }
+
+      // Validasi nomor telepon
+      if (!/^[0-9+\-\s]{8,15}$/.test(phoneNumber.trim())) {
+        setErrorMsg('Format nomor telepon tidak valid. Contoh: 08123456789');
         return;
       }
 
@@ -102,16 +115,23 @@ export default function LoginPage() {
       }
 
       // Create new customer account
-      const newCustomer = { name, email, password };
+      const newCustomer = { name, email, phoneNumber: phoneNumber.trim(), password };
       users.push(newCustomer);
       localStorage.setItem('hotel_users', JSON.stringify(users));
 
-      // Auto login customer after registration
-      const customerUser = { name: newCustomer.name, email: newCustomer.email, role: 'customer' };
-      localStorage.setItem('currentUser', JSON.stringify(customerUser));
-
-      setSuccessMsg('Registrasi berhasil! Menyiapkan halaman...');
-      setTimeout(() => router.push('/'), 1000);
+      // Do NOT auto-login. Show success message and switch to login mode after 2 seconds.
+      setSuccessMsg('Registrasi berhasil! Silakan masuk dengan akun Anda.');
+      setTimeout(() => {
+        setIsLoginMode(true);
+        setFormData({
+          name: '',
+          email: newCustomer.email,
+          phoneNumber: '',
+          password: '',
+          confirmPassword: ''
+        });
+        setSuccessMsg('');
+      }, 2000);
     }
   };
 
@@ -200,6 +220,27 @@ export default function LoginPage() {
             </div>
           </div>
 
+          {/* Nomor HP — hanya di Register */}
+          {!isLoginMode && (
+            <div className="auth-group">
+              <label htmlFor="phoneNumber">Nomor HP / WhatsApp</label>
+              <div className="auth-input-wrapper">
+                <FaPhone className="auth-input-icon" />
+                <input 
+                  type="tel" 
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  placeholder="Contoh: 08123456789"
+                  required
+                  maxLength={15}
+                  autoComplete="tel"
+                />
+              </div>
+            </div>
+          )}
+
           <div className="auth-group">
             <label htmlFor="password">Password</label>
             <div className="auth-input-wrapper">
@@ -238,8 +279,6 @@ export default function LoginPage() {
             {isLoginMode ? 'Masuk' : 'Daftar Sekarang'}
           </button>
         </form>
-
-        {/* No hints displayed on Customer login page */}
       </div>
 
       <style jsx>{`
@@ -443,17 +482,6 @@ export default function LoginPage() {
           font-size: 0.95rem;
           font-weight: 600;
           width: 100%;
-        }
-
-        .auth-hints {
-          margin-top: 24px;
-          padding: 12px;
-          background-color: var(--color-blue-light);
-          border: 1px solid rgba(29, 106, 138, 0.15);
-          border-radius: var(--radius-sm);
-          font-size: 0.78rem;
-          color: var(--color-text-light);
-          line-height: 1.5;
         }
       `}</style>
     </div>

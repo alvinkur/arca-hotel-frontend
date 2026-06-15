@@ -27,7 +27,7 @@ const DUMMY_ROOM_DATA = [
   {
     id: 2,
     name: "Standard Room",
-    price: 150000,
+    price: 200000,
     description: "A blend of comfort and style. Equipped with premium bedding, modern utilities, and a refreshing garden view balcony.",
     image: "/assets/standart_room.jpg",
     amenities: ["Free WiFi", "Breakfast", "Smart TV"]
@@ -35,11 +35,35 @@ const DUMMY_ROOM_DATA = [
   {
     id: 3,
     name: "VIP Suite",
-    price: 250000,
+    price: 350000,
     description: "Experience absolute luxury. Spaciously designed with high-end furniture, private lounge, premium entertainment, and premium comfort.",
     image: "/assets/vip_room.jpg",
-    amenities: ["Free WiFi", "Breakfast", "Smart TV"]
+    amenities: ["Free WiFi", "Breakfast", "Smart TV", "Private Lounge"]
   }
+];
+
+const DEFAULT_ROOMS = [
+  // Economy Room — Lantai 1 (6 kamar: 101–106)
+  { id: 1, roomNumber: "101", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities, comfortable bed, and pleasant surroundings.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi", "Smart TV"] },
+  { id: 2, roomNumber: "102", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities, comfortable bed, and pleasant surroundings.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi", "Smart TV"] },
+  { id: 3, roomNumber: "103", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities, comfortable bed, and pleasant surroundings.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi", "Smart TV"] },
+  { id: 4, roomNumber: "104", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities, comfortable bed, and pleasant surroundings.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi", "Smart TV"] },
+  { id: 5, roomNumber: "105", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities, comfortable bed, and pleasant surroundings.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi", "Smart TV"] },
+  { id: 6, roomNumber: "106", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities, comfortable bed, and pleasant surroundings.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi", "Smart TV"] },
+  // Standard Room — Lantai 1 (8 kamar: 107–114)
+  { id: 7, roomNumber: "107", name: "Standard Room", price: 200000, floor: 1, description: "Equipped with premium bedding, modern utilities, and a refreshing garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi", "Breakfast", "Smart TV"] },
+  { id: 8, roomNumber: "108", name: "Standard Room", price: 200000, floor: 1, description: "Equipped with premium bedding, modern utilities, and a refreshing garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi", "Breakfast", "Smart TV"] },
+  { id: 9, roomNumber: "109", name: "Standard Room", price: 200000, floor: 1, description: "Equipped with premium bedding, modern utilities, and a refreshing garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi", "Breakfast", "Smart TV"] },
+  { id: 10, roomNumber: "110", name: "Standard Room", price: 200000, floor: 1, description: "Equipped with premium bedding, modern utilities, and a refreshing garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi", "Breakfast", "Smart TV"] },
+  { id: 11, roomNumber: "111", name: "Standard Room", price: 200000, floor: 1, description: "Equipped with premium bedding, modern utilities, and a refreshing garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi", "Breakfast", "Smart TV"] },
+  { id: 12, roomNumber: "112", name: "Standard Room", price: 200000, floor: 1, description: "Equipped with premium bedding, modern utilities, and a refreshing garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi", "Breakfast", "Smart TV"] },
+  { id: 13, roomNumber: "113", name: "Standard Room", price: 200000, floor: 1, description: "Equipped with premium bedding, modern utilities, and a refreshing garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi", "Breakfast", "Smart TV"] },
+  { id: 14, roomNumber: "114", name: "Standard Room", price: 200000, floor: 1, description: "Equipped with premium bedding, modern utilities, and a refreshing garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi", "Breakfast", "Smart TV"] },
+  // VIP Suite — Lantai 2 (4 kamar: 201–204)
+  { id: 15, roomNumber: "201", name: "VIP Suite", price: 350000, floor: 2, description: "Spaciously designed with high-end furniture, private lounge, and premium entertainment.", image: "/assets/vip_room.jpg", amenities: ["Free WiFi", "Breakfast", "Smart TV", "Private Lounge"] },
+  { id: 16, roomNumber: "202", name: "VIP Suite", price: 350000, floor: 2, description: "Spaciously designed with high-end furniture, private lounge, and premium entertainment.", image: "/assets/vip_room.jpg", amenities: ["Free WiFi", "Breakfast", "Smart TV", "Private Lounge"] },
+  { id: 17, roomNumber: "203", name: "VIP Suite", price: 350000, floor: 2, description: "Spaciously designed with high-end furniture, private lounge, and premium entertainment.", image: "/assets/vip_room.jpg", amenities: ["Free WiFi", "Breakfast", "Smart TV", "Private Lounge"] },
+  { id: 18, roomNumber: "204", name: "VIP Suite", price: 350000, floor: 2, description: "Spaciously designed with high-end furniture, private lounge, and premium entertainment.", image: "/assets/vip_room.jpg", amenities: ["Free WiFi", "Breakfast", "Smart TV", "Private Lounge"] },
 ];
 
 export default function Home() {
@@ -77,13 +101,26 @@ export default function Home() {
 
         const hasStandard = parsed.some(r => r.name === 'Standard Room');
         const hasDeluxe = parsed.some(r => r.name === 'Deluxe Room');
+        const needsMigration = parsed.some(r => r.floor === 3 || r.roomNumber === '301');
 
-        if (!storedRooms || parsed.length === 0 || !hasStandard || hasDeluxe) {
-          localStorage.setItem('hotel_rooms', JSON.stringify(DUMMY_ROOM_DATA));
-          setRooms(DUMMY_ROOM_DATA);
+        let activeRooms = [];
+        if (!storedRooms || parsed.length < 10 || !hasStandard || hasDeluxe || needsMigration) {
+          localStorage.setItem('hotel_rooms', JSON.stringify(DEFAULT_ROOMS));
+          activeRooms = DEFAULT_ROOMS;
         } else {
-          setRooms(parsed);
+          activeRooms = parsed;
         }
+
+        // Filter unique types for rendering cards on the Home page
+        const uniqueRooms = [];
+        const seenTypes = new Set();
+        for (const r of activeRooms) {
+          if (!seenTypes.has(r.name)) {
+            seenTypes.add(r.name);
+            uniqueRooms.push(r);
+          }
+        }
+        setRooms(uniqueRooms);
       } else {
         setRooms(DUMMY_ROOM_DATA);
       }
