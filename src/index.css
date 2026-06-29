@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+:root {
+  /* Color Palette */
+  --color-blue-deep: #0a2d42;     /* Deep sea/navy */
+  --color-blue-sea: #1d6a8a;      /* Turquoise blue */
+  --color-blue-light: #f2f7fa;    /* Pale beach water */
+  --color-gold: #c5a059;          /* Premium luxury gold */
+  --color-gold-hover: #a3813c;    /* Hover state for gold elements */
+  --color-gold-light: rgba(197, 160, 89, 0.1);
+  --color-sand-light: #FAF8F5;    /* Pristine warm sand */
+  --color-sand-dark: #E6DFD3;     /* Darker sand beige */
+  --color-white: #ffffff;
+  --color-text-dark: #1E2833;     /* Soft slate text for high contrast readability */
+  --color-text-light: #5B6D7A;    /* Muted text */
+  --color-border: #EFEBE4;
+
+  /* Typography */
+  --font-title: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Layout and Effects */
+  --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --shadow-sm: 0 2px 8px rgba(10, 45, 66, 0.04);
+  --shadow-md: 0 8px 24px rgba(10, 45, 66, 0.08);
+  --shadow-lg: 0 16px 40px rgba(10, 45, 66, 0.12);
+  --radius-sm: 4px;
+  --radius-md: 12px;
+  --radius-lg: 24px;
+  
+  /* Scroll padding for sticky navbar */
+  scroll-padding-top: 80px;
+}
+
+/* Reset and Normalization */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-sand-light);
+  color: var(--color-text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: var(--transition-smooth);
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* Focus styling for accessibility */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
