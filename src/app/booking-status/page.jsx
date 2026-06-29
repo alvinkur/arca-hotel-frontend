@@ -3,11 +3,18 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
+<<<<<<< HEAD
 import {
   FaArrowLeft, FaTicketAlt, FaSearch, FaCheckCircle, FaExclamationCircle,
   FaHourglassHalf, FaCalendarAlt, FaDoorOpen, FaUser, FaPhone
 } from 'react-icons/fa';
 import { getBooking, getBookings, getRooms } from '../../services/api';
+=======
+import { 
+  FaArrowLeft, FaTicketAlt, FaSearch, FaCheckCircle, FaExclamationCircle, 
+  FaHourglassHalf, FaBed, FaCalendarAlt, FaDoorOpen, FaUser, FaBuilding, FaPhone
+} from 'react-icons/fa';
+>>>>>>> upstream/main
 
 export default function BookingStatusPage() {
   return (
@@ -24,6 +31,7 @@ export default function BookingStatusPage() {
 function BookingStatusContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+<<<<<<< HEAD
   const initialId = searchParams.get('id') || '';
 
   const [searchId, setSearchId] = useState(initialId);
@@ -81,10 +89,59 @@ function BookingStatusContent() {
   }, [initialId]);
 
   const handleSearch = async (e) => {
+=======
+  const initialCode = searchParams.get('code') || '';
+
+  const [searchCode, setSearchCode] = useState(initialCode);
+  const [booking, setBooking] = useState(null);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [currentUser, setCurrentUser] = useState(null);
+  const [myBookings, setMyBookings] = useState([]);
+
+  // Load bookings and user session
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Load current user
+    const userStr = localStorage.getItem('currentUser');
+    let loggedInUser = null;
+    if (userStr) {
+      loggedInUser = JSON.parse(userStr);
+      setCurrentUser(loggedInUser);
+    }
+
+    // Load bookings
+    const bookings = JSON.parse(localStorage.getItem('hotel_bookings') || '[]');
+    
+    // Filter bookings belonging to the user
+    if (loggedInUser) {
+      const userBookings = bookings.filter(b => 
+        (b.email && b.email.toLowerCase() === loggedInUser.email.toLowerCase()) ||
+        (b.phoneNumber && b.phoneNumber.replace(/[\s+\-]/g, '') === (loggedInUser.phoneNumber || '').replace(/[\s+\-]/g, '')) ||
+        (b.guestName && b.guestName.toLowerCase() === loggedInUser.name.toLowerCase())
+      );
+      setMyBookings(userBookings);
+    }
+
+    // If query string contains code, look it up immediately
+    if (initialCode) {
+      const found = bookings.find(b => b.bookingCode.toUpperCase() === initialCode.toUpperCase());
+      if (found) {
+        setBooking(found);
+        setErrorMsg('');
+      } else {
+        setErrorMsg('Pemesanan dengan kode tersebut tidak ditemukan.');
+      }
+    }
+  }, [initialCode]);
+
+  const handleSearch = (e) => {
+>>>>>>> upstream/main
     e.preventDefault();
     setErrorMsg('');
     setBooking(null);
 
+<<<<<<< HEAD
     const trimmed = searchId.trim();
     if (!trimmed) {
       setErrorMsg('Masukkan ID booking terlebih dahulu.');
@@ -120,6 +177,33 @@ function BookingStatusContent() {
       })
       .catch(() => setErrorMsg('Gagal memuat data booking.'))
       .finally(() => setIsSearching(false));
+=======
+    if (!searchCode.trim()) {
+      setErrorMsg('Masukkan kode booking terlebih dahulu.');
+      return;
+    }
+
+    const bookings = JSON.parse(localStorage.getItem('hotel_bookings') || '[]');
+    const found = bookings.find(b => b.bookingCode.toUpperCase() === searchCode.trim().toUpperCase());
+    
+    if (found) {
+      setBooking(found);
+      router.replace(`/booking-status?code=${found.bookingCode}`);
+    } else {
+      setErrorMsg('Pemesanan dengan kode tersebut tidak ditemukan. Periksa kembali penulisan kode Anda.');
+    }
+  };
+
+  const selectMyBooking = (code) => {
+    setSearchCode(code);
+    const bookings = JSON.parse(localStorage.getItem('hotel_bookings') || '[]');
+    const found = bookings.find(b => b.bookingCode === code);
+    if (found) {
+      setBooking(found);
+      router.replace(`/booking-status?code=${code}`);
+      setErrorMsg('');
+    }
+>>>>>>> upstream/main
   };
 
   const formatIDR = (num) => {
@@ -141,6 +225,7 @@ function BookingStatusContent() {
     }
   };
 
+<<<<<<< HEAD
   // Map backend status to display status
   const mapStatus = (status) => {
     const s = (status || '').toLowerCase();
@@ -173,6 +258,29 @@ function BookingStatusContent() {
         icon: <FaHourglassHalf className="status-icon" />
       };
     } else if (s === 'waiting_confirmation') {
+=======
+  // Determine check-in readiness status message and styling
+  const getReadinessStatus = (b) => {
+    if (!b) return null;
+
+    if (b.paymentStatus === 'Paid') {
+      return {
+        allowed: true,
+        title: 'Bisa Masuk Hotel (Dipersilakan Check-in)',
+        description: 'Pembayaran Anda telah kami terima dan diverifikasi. Silakan tunjukkan kode booking ini ke resepsionis pada saat kedatangan untuk mengambil kunci kamar.',
+        class: 'readiness-green',
+        icon: <FaCheckCircle className="status-icon" />
+      };
+    } else if (b.paymentStatus === 'Pay at Hotel') {
+      return {
+        allowed: true,
+        title: 'Reservasi Aktif (Bayar Saat Check-in)',
+        description: 'Reservasi Anda terdaftar dengan metode Bayar di Hotel (Cash). Silakan lakukan pembayaran di resepsionis setibanya di hotel untuk mengambil kunci kamar dan masuk.',
+        class: 'readiness-orange',
+        icon: <FaHourglassHalf className="status-icon" />
+      };
+    } else if (b.paymentStatus === 'Awaiting Confirmation') {
+>>>>>>> upstream/main
       return {
         allowed: false,
         title: 'Menunggu Konfirmasi Pembayaran',
@@ -180,7 +288,11 @@ function BookingStatusContent() {
         class: 'readiness-blue',
         icon: <FaHourglassHalf className="status-icon animate-pulse" />
       };
+<<<<<<< HEAD
     } else if (s === 'cancelled') {
+=======
+    } else if (b.paymentStatus === 'Cancelled') {
+>>>>>>> upstream/main
       return {
         allowed: false,
         title: 'Reservasi Dibatalkan',
@@ -201,6 +313,7 @@ function BookingStatusContent() {
 
   const statusInfo = getReadinessStatus(booking);
 
+<<<<<<< HEAD
   const getRoomName = (idRoom) => {
     const room = roomMap[idRoom];
     return room?.room_type?.name || room?.room_number ? `${room.room_type?.name || 'Kamar'} (No. ${room.room_number})` : '-';
@@ -223,14 +336,29 @@ function BookingStatusContent() {
     <div className="status-page">
       <div className="status-container">
 
+=======
+  return (
+    <div className="status-page">
+      <div className="status-container">
+        
+        {/* Back Link */}
+>>>>>>> upstream/main
         <Link href="/" className="back-link">
           <FaArrowLeft /> Kembali ke Beranda
         </Link>
 
+<<<<<<< HEAD
         <div className="status-header">
           <FaTicketAlt className="header-ticket" />
           <h1>Cek Status Reservasi & Pembayaran</h1>
           <p>Masukkan ID booking Anda untuk melihat status pembayaran dan kelayakan masuk hotel.</p>
+=======
+        {/* Header */}
+        <div className="status-header">
+          <FaTicketAlt className="header-ticket" />
+          <h1>Cek Status Reservasi & Pembayaran</h1>
+          <p>Masukkan kode booking Anda untuk melihat status pembayaran dan kelayakan masuk hotel.</p>
+>>>>>>> upstream/main
         </div>
 
         {/* Search Box */}
@@ -238,6 +366,7 @@ function BookingStatusContent() {
           <form onSubmit={handleSearch} className="search-form">
             <div className="input-group">
               <FaSearch className="search-input-icon" />
+<<<<<<< HEAD
               <input
                 type="text"
                 value={searchId}
@@ -249,6 +378,17 @@ function BookingStatusContent() {
             <button type="submit" className="btn-gold search-btn" disabled={isSearching}>
               {isSearching ? 'Mencari...' : 'Cek Status'}
             </button>
+=======
+              <input 
+                type="text" 
+                value={searchCode}
+                onChange={(e) => setSearchCode(e.target.value)}
+                placeholder="Contoh: ARC-123456"
+                required
+              />
+            </div>
+            <button type="submit" className="btn-gold search-btn">Cek Status</button>
+>>>>>>> upstream/main
           </form>
           {errorMsg && <div className="error-alert"><FaExclamationCircle /> {errorMsg}</div>}
         </div>
@@ -256,6 +396,10 @@ function BookingStatusContent() {
         {/* Search Result */}
         {booking && (
           <div className="fade-in">
+<<<<<<< HEAD
+=======
+            {/* Readiness Banner */}
+>>>>>>> upstream/main
             <div className={`readiness-banner ${statusInfo.class}`}>
               {statusInfo.icon}
               <div className="readiness-text">
@@ -264,39 +408,79 @@ function BookingStatusContent() {
               </div>
             </div>
 
+<<<<<<< HEAD
             <div className="receipt-grid">
+=======
+            {/* Receipt Grid */}
+            <div className="receipt-grid">
+              
+>>>>>>> upstream/main
               {/* Left Column: Booking Info */}
               <div className="card-custom receipt-details">
                 <h2>Rincian Reservasi</h2>
                 <div className="receipt-divider"></div>
+<<<<<<< HEAD
 
                 <div className="info-row">
                   <div className="info-label"><FaTicketAlt /> ID Booking</div>
                   <div className="info-value font-mono highlight-gold">#{booking.id_booking}</div>
+=======
+                
+                <div className="info-row">
+                  <div className="info-label"><FaTicketAlt /> Kode Booking</div>
+                  <div className="info-value font-mono highlight-gold">{booking.bookingCode}</div>
+>>>>>>> upstream/main
                 </div>
 
                 <div className="info-row">
                   <div className="info-label"><FaUser /> Nama Tamu</div>
+<<<<<<< HEAD
                   <div className="info-value">{currentUser?.name || '-'}</div>
+=======
+                  <div className="info-value">{booking.guestName}</div>
+>>>>>>> upstream/main
                 </div>
 
                 <div className="info-row">
                   <div className="info-label"><FaPhone /> Nomor HP</div>
+<<<<<<< HEAD
                   <div className="info-value">{currentUser?.phone_number || currentUser?.phoneNumber || '-'}</div>
+=======
+                  <div className="info-value">{booking.phoneNumber || '-'}</div>
+>>>>>>> upstream/main
                 </div>
 
                 <div className="info-row">
                   <div className="info-label"><FaCalendarAlt /> Check-in</div>
+<<<<<<< HEAD
                   <div className="info-value">{formatDate(booking.date_in)}</div>
+=======
+                  <div className="info-value">{formatDate(booking.checkIn)}</div>
+>>>>>>> upstream/main
                 </div>
 
                 <div className="info-row">
                   <div className="info-label"><FaCalendarAlt /> Check-out</div>
+<<<<<<< HEAD
                   <div className="info-value">{formatDate(booking.date_out)}</div>
+=======
+                  <div className="info-value">{formatDate(booking.checkOut)}</div>
+                </div>
+
+                <div className="info-row">
+                  <div className="info-label"><FaBuilding /> Durasi Menginap</div>
+                  <div className="info-value">{booking.nights} Malam</div>
+                </div>
+
+                <div className="info-row">
+                  <div className="info-label"><FaUser /> Kapasitas</div>
+                  <div className="info-value">{booking.guestsCount} Orang</div>
+>>>>>>> upstream/main
                 </div>
 
                 <div className="info-row">
                   <div className="info-label"><FaDoorOpen /> Tipe Kamar</div>
+<<<<<<< HEAD
                   <div className="info-value font-weight-bold">{getRoomName(booking.id_room)}</div>
                 </div>
 
@@ -304,6 +488,17 @@ function BookingStatusContent() {
                   <div className="info-label"><FaDoorOpen /> Nomor Kamar</div>
                   <div className="info-value font-mono room-num-badge">Kamar {getRoomNumber(booking.id_room)}</div>
                 </div>
+=======
+                  <div className="info-value font-weight-bold">{booking.roomType}</div>
+                </div>
+
+                {booking.roomNumber && (
+                  <div className="info-row">
+                    <div className="info-label"><FaDoorOpen /> Nomor Kamar</div>
+                    <div className="info-value font-mono room-num-badge">Kamar {booking.roomNumber}</div>
+                  </div>
+                )}
+>>>>>>> upstream/main
               </div>
 
               {/* Right Column: Payment Details */}
@@ -313,14 +508,20 @@ function BookingStatusContent() {
 
                 <div className="payment-status-box">
                   <span className="p-label">Status Pembayaran</span>
+<<<<<<< HEAD
                   <span className={`p-pill ${mapStatus(booking.status_payment).cssClass}`}>
                     {mapStatus(booking.status_payment).label}
+=======
+                  <span className={`p-pill ${booking.paymentStatus === 'Paid' ? 'p-green' : booking.paymentStatus === 'Pay at Hotel' ? 'p-orange' : booking.paymentStatus === 'Awaiting Confirmation' ? 'p-blue' : 'p-red'}`}>
+                    {booking.paymentStatus === 'Paid' ? 'Lunas / Diterima' : booking.paymentStatus === 'Pay at Hotel' ? 'Bayar Saat Check-in' : booking.paymentStatus === 'Awaiting Confirmation' ? 'Menunggu Verifikasi' : 'Belum Bayar'}
+>>>>>>> upstream/main
                   </span>
                 </div>
 
                 <div className="receipt-bill">
                   <div className="bill-row">
                     <span>Tipe Kamar</span>
+<<<<<<< HEAD
                     <span>{getRoomName(booking.id_room)}</span>
                   </div>
                   <div className="bill-row">
@@ -337,36 +538,85 @@ function BookingStatusContent() {
                 {(booking.status_payment === 'pending') && (
                   <div style={{ marginTop: '20px' }}>
                     <Link href={`/payment?id_booking=${booking.id_booking}`} className="btn-gold block-btn">
+=======
+                    <span>{booking.roomType}</span>
+                  </div>
+                  <div className="bill-row">
+                    <span>Durasi</span>
+                    <span>{booking.nights} Malam</span>
+                  </div>
+                  <div className="bill-row">
+                    <span>Metode Pembayaran</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>{booking.paymentMethod || 'Belum Ditentukan'}</span>
+                  </div>
+                  {booking.confirmedBy && (
+                    <div className="bill-row">
+                      <span>Dikonfirmasi Oleh</span>
+                      <span className="text-uppercase" style={{ fontSize: '0.75rem', color: '#6b7280' }}>{booking.confirmedBy}</span>
+                    </div>
+                  )}
+                  <div className="bill-divider"></div>
+                  <div className="bill-row bill-total">
+                    <span>Total Tagihan</span>
+                    <span>{formatIDR(booking.totalRevenue)}</span>
+                  </div>
+                </div>
+
+                {booking.paymentStatus === 'Awaiting Payment' && (
+                  <div style={{ marginTop: '20px' }}>
+                    <Link href={`/payment?code=${booking.bookingCode}`} className="btn-gold block-btn">
+>>>>>>> upstream/main
                       Selesaikan Pembayaran Sekarang
                     </Link>
                   </div>
                 )}
               </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/main
             </div>
           </div>
         )}
 
         {/* User's Bookings list (if logged in) */}
+<<<<<<< HEAD
         {currentUser && myBookings.length > 0 && !initialId && (
           <div className="card-custom list-card">
             <h2>Daftar Reservasi Anda</h2>
             <p style={{ color: 'var(--color-text-light)', fontSize: '0.85rem', marginBottom: '16px' }}>
               Ditemukan {myBookings.length} reservasi terhubung dengan akun Anda.
+=======
+        {currentUser && myBookings.length > 0 && (
+          <div className="card-custom list-card">
+            <h2>Daftar Reservasi Anda</h2>
+            <p style={{ color: 'var(--color-text-light)', fontSize: '0.85rem', marginBottom: '16px' }}>
+              Ditemukan {myBookings.length} reservasi terhubung dengan nama/akun Anda.
+>>>>>>> upstream/main
             </p>
             <div className="table-responsive">
               <table className="bookings-table">
                 <thead>
                   <tr>
+<<<<<<< HEAD
                     <th>ID Booking</th>
                     <th>Tipe Kamar</th>
                     <th>No. Kamar</th>
                     <th>Tanggal Menginap</th>
                     <th>Status</th>
+=======
+                    <th>Kode Booking</th>
+                    <th>Tipe Kamar</th>
+                    <th>No. Kamar</th>
+                    <th>Tanggal Menginap</th>
+                    <th>Status Pembayaran</th>
+>>>>>>> upstream/main
                     <th>Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
                   {myBookings.map((b) => (
+<<<<<<< HEAD
                     <tr key={b.id_booking}>
                       <td className="font-mono" style={{ fontWeight: 700, color: 'var(--color-blue-deep)' }}>#{b.id_booking}</td>
                       <td>{getRoomName(b.id_room)}</td>
@@ -381,6 +631,20 @@ function BookingStatusContent() {
                       </td>
                       <td>
                         <button onClick={() => selectMyBooking(b.id_booking)} className="btn-table">
+=======
+                    <tr key={b.bookingCode}>
+                      <td className="font-mono" style={{ fontWeight: 700, color: 'var(--color-blue-deep)' }}>{b.bookingCode}</td>
+                      <td>{b.roomType}</td>
+                      <td className="font-mono">{b.roomNumber || '-'}</td>
+                      <td style={{ fontSize: '0.8rem' }}>{b.checkIn} s/d {b.checkOut}</td>
+                      <td>
+                        <span className={`pill-status ${b.paymentStatus === 'Paid' ? 'pill-green' : b.paymentStatus === 'Pay at Hotel' ? 'pill-orange' : b.paymentStatus === 'Awaiting Confirmation' ? 'pill-blue' : 'pill-red'}`}>
+                          {b.paymentStatus === 'Paid' ? 'Lunas' : b.paymentStatus === 'Pay at Hotel' ? 'Bayar Hotel' : b.paymentStatus === 'Awaiting Confirmation' ? 'Diverifikasi' : 'Belum Bayar'}
+                        </span>
+                      </td>
+                      <td>
+                        <button onClick={() => selectMyBooking(b.bookingCode)} className="btn-table">
+>>>>>>> upstream/main
                           Pilih & Lihat
                         </button>
                       </td>
@@ -462,6 +726,10 @@ function BookingStatusContent() {
           margin-bottom: 24px;
         }
 
+<<<<<<< HEAD
+=======
+        /* Search Card */
+>>>>>>> upstream/main
         .search-card {
           border: 1px solid rgba(255, 255, 255, 0.1);
           background: rgba(255, 255, 255, 0.95);
@@ -493,7 +761,13 @@ function BookingStatusContent() {
           font-size: 1rem;
           outline: none;
           transition: all 0.2s ease;
+<<<<<<< HEAD
           font-weight: 600;
+=======
+          font-family: 'Courier New', monospace;
+          font-weight: 700;
+          letter-spacing: 1px;
+>>>>>>> upstream/main
         }
 
         .input-group input:focus {
@@ -510,11 +784,14 @@ function BookingStatusContent() {
           border-radius: 8px;
         }
 
+<<<<<<< HEAD
         .search-btn:disabled {
           opacity: 0.6;
           cursor: not-allowed;
         }
 
+=======
+>>>>>>> upstream/main
         .error-alert {
           display: flex;
           align-items: center;
@@ -525,6 +802,10 @@ function BookingStatusContent() {
           font-weight: 500;
         }
 
+<<<<<<< HEAD
+=======
+        /* Readiness Banner */
+>>>>>>> upstream/main
         .readiness-banner {
           display: flex;
           align-items: flex-start;
@@ -579,6 +860,10 @@ function BookingStatusContent() {
           margin: 0;
         }
 
+<<<<<<< HEAD
+=======
+        /* Receipt Grid */
+>>>>>>> upstream/main
         .receipt-grid {
           display: grid;
           grid-template-columns: 1.2fr 1fr;
@@ -639,6 +924,10 @@ function BookingStatusContent() {
           border-radius: 6px;
         }
 
+<<<<<<< HEAD
+=======
+        /* Payment side card */
+>>>>>>> upstream/main
         .payment-status-box {
           display: flex;
           flex-direction: column;
@@ -709,6 +998,10 @@ function BookingStatusContent() {
           box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
+<<<<<<< HEAD
+=======
+        /* List card */
+>>>>>>> upstream/main
         .list-card {
           margin-top: 24px;
         }
@@ -801,9 +1094,17 @@ function BookingStatusContent() {
             grid-template-columns: 1fr;
             gap: 20px;
           }
+<<<<<<< HEAD
           .search-form {
             flex-direction: column;
           }
+=======
+          
+          .search-form {
+            flex-direction: column;
+          }
+          
+>>>>>>> upstream/main
           .search-btn {
             padding: 14px;
           }

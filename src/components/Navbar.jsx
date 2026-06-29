@@ -3,7 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { FaBars, FaTimes, FaConciergeBell } from 'react-icons/fa';
+<<<<<<< HEAD
 import { clearAuth } from '../services/api';
+=======
+>>>>>>> upstream/main
 
 // Component: Navbar
 export default function Navbar({ onBookingClick }) {
@@ -27,7 +30,11 @@ export default function Navbar({ onBookingClick }) {
   }, []);
 
   const handleLogout = () => {
+<<<<<<< HEAD
     clearAuth();
+=======
+    localStorage.removeItem('currentUser');
+>>>>>>> upstream/main
     setCurrentUser(null);
     window.location.href = '/';
   };

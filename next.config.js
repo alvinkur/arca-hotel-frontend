@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+<<<<<<< HEAD
   async rewrites() {
     return [
       {
@@ -17,6 +18,8 @@ const nextConfig = {
       },
     ];
   },
+=======
+>>>>>>> upstream/main
 };
 
 export default nextConfig;
