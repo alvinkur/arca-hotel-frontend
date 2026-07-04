@@ -4,10 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FaUser, FaEnvelope, FaLock, FaArrowLeft, FaPhone, FaExclamationCircle } from 'react-icons/fa';
-<<<<<<< HEAD
 import { register, login, setAuthToken } from '../../services/api';
-=======
->>>>>>> upstream/main
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,10 +18,7 @@ export default function LoginPage() {
   });
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
-<<<<<<< HEAD
   const [isLoading, setIsLoading] = useState(false);
-=======
->>>>>>> upstream/main
 
   // Clear notifications on tab switch
   useEffect(() => {
@@ -45,7 +39,6 @@ export default function LoginPage() {
     if (errorMsg) setErrorMsg('');
   };
 
-<<<<<<< HEAD
   const handleAuth = async (e) => {
     e.preventDefault();
     setErrorMsg('');
@@ -123,103 +116,6 @@ export default function LoginPage() {
       }
     } finally {
       setIsLoading(false);
-=======
-  const handleAuth = (e) => {
-    e.preventDefault();
-    setErrorMsg('');
-    setSuccessMsg('');
-
-    if (isLoginMode) {
-      // --- LOGIN LOGIC ---
-      const { email, password } = formData;
-
-      if (!email || !password) {
-        setErrorMsg('Email dan Password wajib diisi.');
-        return;
-      }
-
-      // Blokir email staff/owner jika dicoba login di halaman customer ini
-      if (email.toLowerCase() === 'staff@arca.com' || email.toLowerCase() === 'owner@arca.com') {
-        setErrorMsg('Gagal. Silakan masuk melalui portal manajemen masing-masing.');
-        return;
-      }
-
-      // Check Customers in localStorage
-      const users = JSON.parse(localStorage.getItem('hotel_users') || '[]');
-      const customer = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
-
-      if (customer) {
-        const customerUser = { 
-          name: customer.name, 
-          email: customer.email, 
-          phoneNumber: customer.phoneNumber || '',
-          role: 'customer' 
-        };
-        localStorage.setItem('currentUser', JSON.stringify(customerUser));
-        setSuccessMsg(`Selamat datang kembali, ${customer.name}!`);
-        setTimeout(() => router.push('/'), 1000);
-      } else {
-        setErrorMsg('Email atau password salah.');
-      }
-
-    } else {
-      // --- REGISTER LOGIC ---
-      const { name, email, phoneNumber, password, confirmPassword } = formData;
-
-      if (!name || !email || !phoneNumber || !password || !confirmPassword) {
-        setErrorMsg('Semua kolom wajib diisi.');
-        return;
-      }
-
-      // Validasi nomor telepon
-      if (!/^[0-9+\-\s]{8,15}$/.test(phoneNumber.trim())) {
-        setErrorMsg('Format nomor telepon tidak valid. Contoh: 08123456789');
-        return;
-      }
-
-      if (password !== confirmPassword) {
-        setErrorMsg('Konfirmasi password tidak cocok.');
-        return;
-      }
-
-      if (password.length < 6) {
-        setErrorMsg('Password minimal terdiri dari 6 karakter.');
-        return;
-      }
-
-      // Check if email already registered
-      if (email === 'staff@arca.com' || email === 'owner@arca.com') {
-        setErrorMsg('Email ini tidak dapat didaftarkan.');
-        return;
-      }
-
-      const users = JSON.parse(localStorage.getItem('hotel_users') || '[]');
-      const emailExists = users.some(u => u.email.toLowerCase() === email.toLowerCase());
-
-      if (emailExists) {
-        setErrorMsg('Email sudah terdaftar. Silakan gunakan email lain atau login.');
-        return;
-      }
-
-      // Create new customer account
-      const newCustomer = { name, email, phoneNumber: phoneNumber.trim(), password };
-      users.push(newCustomer);
-      localStorage.setItem('hotel_users', JSON.stringify(users));
-
-      // Do NOT auto-login. Show success message and switch to login mode after 2 seconds.
-      setSuccessMsg('Registrasi berhasil! Silakan masuk dengan akun Anda.');
-      setTimeout(() => {
-        setIsLoginMode(true);
-        setFormData({
-          name: '',
-          email: newCustomer.email,
-          phoneNumber: '',
-          password: '',
-          confirmPassword: ''
-        });
-        setSuccessMsg('');
-      }, 2000);
->>>>>>> upstream/main
     }
   };
 
@@ -244,22 +140,14 @@ export default function LoginPage() {
 
         {/* Tabs */}
         <div className="auth-tabs">
-<<<<<<< HEAD
           <button
-=======
-          <button 
->>>>>>> upstream/main
             type="button"
             className={`auth-tab ${isLoginMode ? 'active' : ''}`}
             onClick={() => setIsLoginMode(true)}
           >
             Login
           </button>
-<<<<<<< HEAD
           <button
-=======
-          <button 
->>>>>>> upstream/main
             type="button"
             className={`auth-tab ${!isLoginMode ? 'active' : ''}`}
             onClick={() => setIsLoginMode(false)}
@@ -287,13 +175,8 @@ export default function LoginPage() {
               <label htmlFor="name">Nama Lengkap</label>
               <div className="auth-input-wrapper">
                 <FaUser className="auth-input-icon" />
-<<<<<<< HEAD
                 <input
                   type="text"
-=======
-                <input 
-                  type="text" 
->>>>>>> upstream/main
                   id="name"
                   name="name"
                   value={formData.name}
@@ -309,13 +192,8 @@ export default function LoginPage() {
             <label htmlFor="email">Alamat Email</label>
             <div className="auth-input-wrapper">
               <FaEnvelope className="auth-input-icon" />
-<<<<<<< HEAD
               <input
                 type="email"
-=======
-              <input 
-                type="email" 
->>>>>>> upstream/main
                 id="email"
                 name="email"
                 value={formData.email}
@@ -332,13 +210,8 @@ export default function LoginPage() {
               <label htmlFor="phoneNumber">Nomor HP / WhatsApp</label>
               <div className="auth-input-wrapper">
                 <FaPhone className="auth-input-icon" />
-<<<<<<< HEAD
                 <input
                   type="tel"
-=======
-                <input 
-                  type="tel" 
->>>>>>> upstream/main
                   id="phoneNumber"
                   name="phoneNumber"
                   value={formData.phoneNumber}
@@ -356,13 +229,8 @@ export default function LoginPage() {
             <label htmlFor="password">Password</label>
             <div className="auth-input-wrapper">
               <FaLock className="auth-input-icon" />
-<<<<<<< HEAD
               <input
                 type="password"
-=======
-              <input 
-                type="password" 
->>>>>>> upstream/main
                 id="password"
                 name="password"
                 value={formData.password}
@@ -378,13 +246,8 @@ export default function LoginPage() {
               <label htmlFor="confirmPassword">Konfirmasi Password</label>
               <div className="auth-input-wrapper">
                 <FaLock className="auth-input-icon" />
-<<<<<<< HEAD
                 <input
                   type="password"
-=======
-                <input 
-                  type="password" 
->>>>>>> upstream/main
                   id="confirmPassword"
                   name="confirmPassword"
                   value={formData.confirmPassword}
@@ -396,13 +259,8 @@ export default function LoginPage() {
             </div>
           )}
 
-<<<<<<< HEAD
           <button type="submit" className="btn-gold auth-submit-btn" disabled={isLoading}>
             {isLoading ? 'Memproses...' : (isLoginMode ? 'Masuk' : 'Daftar Sekarang')}
-=======
-          <button type="submit" className="btn-gold auth-submit-btn">
-            {isLoginMode ? 'Masuk' : 'Daftar Sekarang'}
->>>>>>> upstream/main
           </button>
         </form>
       </div>
@@ -609,14 +467,11 @@ export default function LoginPage() {
           font-weight: 600;
           width: 100%;
         }
-<<<<<<< HEAD
 
         .auth-submit-btn:disabled {
           opacity: 0.6;
           cursor: not-allowed;
         }
-=======
->>>>>>> upstream/main
       `}</style>
     </div>
   );

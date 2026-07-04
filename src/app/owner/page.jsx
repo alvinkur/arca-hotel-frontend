@@ -8,71 +8,23 @@ import {
   FaCog, FaHome, FaTicketAlt, FaMoneyBillWave, FaChartLine,
   FaSave, FaClipboardList, FaUniversity, FaDoorOpen
 } from 'react-icons/fa';
-<<<<<<< HEAD
 import { getRooms, getRoomTypes, getBookings, getCustomers, createPayment, updateBooking, deleteBooking, updateRoomType, clearAuth } from '../../services/api';
-=======
-
-const DEFAULT_ROOMS = [
-  { id: 1,  roomNumber: "101", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
-  { id: 2,  roomNumber: "102", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
-  { id: 3,  roomNumber: "103", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
-  { id: 4,  roomNumber: "104", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
-  { id: 5,  roomNumber: "105", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
-  { id: 6,  roomNumber: "106", name: "Economy Room", price: 150000, floor: 1, description: "Cozy room with basic facilities.", image: "/assets/ekonomi_room.jpg", amenities: ["Free WiFi","Smart TV"] },
-  { id: 7,  roomNumber: "107", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
-  { id: 8,  roomNumber: "108", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
-  { id: 9,  roomNumber: "109", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
-  { id: 10, roomNumber: "110", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
-  { id: 11, roomNumber: "111", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
-  { id: 12, roomNumber: "112", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
-  { id: 13, roomNumber: "113", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
-  { id: 14, roomNumber: "114", name: "Standard Room", price: 200000, floor: 1, description: "Premium bedding with garden view balcony.", image: "/assets/standart_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV"] },
-  { id: 15, roomNumber: "201", name: "VIP Suite", price: 350000, floor: 2, description: "Luxury suite with private lounge.", image: "/assets/vip_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV","Private Lounge"] },
-  { id: 16, roomNumber: "202", name: "VIP Suite", price: 350000, floor: 2, description: "Luxury suite with private lounge.", image: "/assets/vip_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV","Private Lounge"] },
-  { id: 17, roomNumber: "203", name: "VIP Suite", price: 350000, floor: 2, description: "Luxury suite with private lounge.", image: "/assets/vip_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV","Private Lounge"] },
-  { id: 18, roomNumber: "204", name: "VIP Suite", price: 350000, floor: 2, description: "Luxury suite with private lounge.", image: "/assets/vip_room.jpg", amenities: ["Free WiFi","Breakfast","Smart TV","Private Lounge"] },
-];
->>>>>>> upstream/main
 
 export default function OwnerDashboardPage() {
   const [rooms, setRooms]               = useState([]);
   const [bookings, setBookings]         = useState([]);
-<<<<<<< HEAD
   const [roomTypes, setRoomTypes]       = useState([]);
-=======
->>>>>>> upstream/main
+  const [currentUser, setCurrentUser]   = useState(null);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [activeNav, setActiveNav]       = useState('dashboard');
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType]       = useState('success');
-  const [activeNav, setActiveNav]       = useState('dashboard');
-  const [currentUser, setCurrentUser]   = useState(null);
   const [hoveredPointIndex, setHoveredPointIndex] = useState(null);
-
-<<<<<<< HEAD
-  // Build a map from id_room → room object for quick lookup
-  const roomMap = {};
-  for (const r of rooms) roomMap[r.id_room] = r;
-
-  const loadData = async () => {
-    try {
-      const [roomsData, bookingsData] = await Promise.all([getRooms(), getBookings()]);
-      setRooms(roomsData);
-      setBookings(bookingsData);
-    } catch (e) {}
-    try {
-      const rt = await getRoomTypes();
-      setRoomTypes(rt);
-    } catch (e) {}
-  };
-
-=======
->>>>>>> upstream/main
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const userStr = localStorage.getItem('currentUser');
     if (userStr) {
-<<<<<<< HEAD
       try {
         const user = JSON.parse(userStr);
         setCurrentUser(user);
@@ -85,61 +37,12 @@ export default function OwnerDashboardPage() {
     setCheckingAuth(false);
   }, []);
 
-=======
-      const user = JSON.parse(userStr);
-      setCurrentUser(user);
-      if (user.role === 'owner' || user.email === 'owner@arca.com') {
-        setIsAuthorized(true);
-        // Seed / migrate rooms to 18-room format
-        let stored = [];
-        try { stored = JSON.parse(localStorage.getItem('hotel_rooms') || '[]'); } catch(e) {}
-        const needsMigration = stored.some(r => r.floor === 3 || r.roomNumber === '301');
-        if (stored.length < 10 || needsMigration) {
-          localStorage.setItem('hotel_rooms', JSON.stringify(DEFAULT_ROOMS));
-          setRooms(DEFAULT_ROOMS);
-        } else {
-          setRooms(stored);
-        }
-        // Load bookings
-        let bk = [];
-        try { bk = JSON.parse(localStorage.getItem('hotel_bookings') || '[]'); } catch(e) {}
-        setBookings(bk);
-      }
-    }
-    setCheckingAuth(false);
-
-    // Listen to localStorage changes in real time
-    const handleStorageChange = () => {
-      let bk = [];
-      try { bk = JSON.parse(localStorage.getItem('hotel_bookings') || '[]'); } catch(e) {}
-      setBookings(bk);
-      let rm = [];
-      try { rm = JSON.parse(localStorage.getItem('hotel_rooms') || '[]'); } catch(e) {}
-      if (rm.length > 0) setRooms(rm);
-    };
-    window.addEventListener('storage', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
-
-  const reloadAll = () => {
-    let bk = [];
-    try { bk = JSON.parse(localStorage.getItem('hotel_bookings') || '[]'); } catch(e) {}
-    setBookings(bk);
-    let rm = [];
-    try { rm = JSON.parse(localStorage.getItem('hotel_rooms') || '[]'); } catch(e) {}
-    if (rm.length >= 10) setRooms(rm);
-  };
-
->>>>>>> upstream/main
   const showToast = (msg, type = 'success') => {
     setToastMessage(msg); setToastType(type);
     setTimeout(() => setToastMessage(''), 3500);
   };
 
   // ── Helpers ─────────────────────────────────────────────────
-<<<<<<< HEAD
   const getRoomName = (idRoom) => roomMap[idRoom]?.room_type?.name || '-';
   const getRoomNumber = (idRoom) => roomMap[idRoom]?.room_number || '-';
   const getRoomPrice = (idRoom) => roomMap[idRoom]?.room_type?.price || 0;
@@ -151,14 +54,6 @@ export default function OwnerDashboardPage() {
       const d2 = new Date(b.date_out);
       return Math.max(1, Math.ceil(Math.abs(d2 - d1) / (1000 * 60 * 60 * 24)));
     } catch { return 1; }
-=======
-  const getRevenue = (booking) => {
-    if (booking.totalRevenue && booking.totalRevenue > 0) return booking.totalRevenue;
-    const room = rooms.find(r => r.roomNumber === booking.roomNumber) ||
-                 rooms.find(r => r.name === booking.roomType);
-    const price = room ? room.price : 150000;
-    return price * (booking.nights || 1);
->>>>>>> upstream/main
   };
 
   const formatIDR = (n) => new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(n||0);
@@ -168,7 +63,6 @@ export default function OwnerDashboardPage() {
       const d = new Date(s);
       if (isNaN(d.getTime())) return '-';
       return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-<<<<<<< HEAD
     } catch { return '-'; }
   };
 
@@ -179,16 +73,10 @@ export default function OwnerDashboardPage() {
     if (s === 'waiting_confirmation') return { label: 'Menunggu Verifikasi', cssClass: 'pill-b' };
     if (s === 'cancelled') return { label: 'Dibatalkan', cssClass: 'pill-r' };
     return { label: 'Belum Bayar', cssClass: 'pill-r' };
-=======
-    } catch (e) {
-      return '-';
-    }
->>>>>>> upstream/main
   };
 
   const getRoomBooking = (room) =>
     bookings.find(b =>
-<<<<<<< HEAD
       b.id_room === room.id_room && b.status_payment !== 'cancelled'
     ) || null;
 
@@ -203,43 +91,18 @@ export default function OwnerDashboardPage() {
   const pendingCashRevenue = payHotel.reduce((s,b)    => s + (b.total_payment || 0), 0);
   const totalExpected      = bookings.filter(b=>b.status_payment !== 'cancelled')
                                     .reduce((s,b) => s + (b.total_payment || 0), 0);
-=======
-      (b.roomNumber ? b.roomNumber === room.roomNumber : b.roomType === room.name) &&
-      b.paymentStatus !== 'Cancelled'
-    ) || null;
-
-  // ── Statistics ───────────────────────────────────────────────
-  const paidBookings       = bookings.filter(b => b.paymentStatus === 'Paid');
-  const awaitingTF         = bookings.filter(b => b.paymentStatus === 'Awaiting Confirmation');
-  const payHotel           = bookings.filter(b => b.paymentStatus === 'Pay at Hotel');
-  const awaiting           = bookings.filter(b => b.paymentStatus === 'Awaiting Payment');
-
-  const confirmedRevenue   = paidBookings.reduce((s,b) => s + getRevenue(b), 0);
-  const pendingTFRevenue   = awaitingTF.reduce((s,b)  => s + getRevenue(b), 0);
-  const pendingCashRevenue = payHotel.reduce((s,b)    => s + getRevenue(b), 0);
-  const totalExpected      = bookings.filter(b=>b.paymentStatus!=='Cancelled')
-                                    .reduce((s,b) => s + getRevenue(b), 0);
->>>>>>> upstream/main
 
   const occupiedCount  = rooms.filter(r => getRoomBooking(r)).length;
   const availableCount = rooms.length - occupiedCount;
 
-<<<<<<< HEAD
   // Revenue by room type
   const revenueByType = ['Economy Room','Standard Room','VIP Suite'].map(typeName => {
     const paid = paidBookets.filter(b => getRoomName(b.id_room) === typeName);
     return { name: typeName, revenue: paid.reduce((s,b)=>s+(b.total_payment||0),0), count: paid.length };
-=======
-  // Revenue by type
-  const revenueByType = ['Economy Room','Standard Room','VIP Suite'].map(typeName => {
-    const paid = paidBookings.filter(b => b.roomType === typeName);
-    return { name: typeName, revenue: paid.reduce((s,b)=>s+getRevenue(b),0), count: paid.length };
->>>>>>> upstream/main
   });
   const maxRev = Math.max(...revenueByType.map(r => r.revenue), 1);
 
   // ── Actions ──────────────────────────────────────────────────
-<<<<<<< HEAD
   const handleMarkAsPaid = async (idBooking) => {
     const booking = bookings.find(b => b.id_booking === idBooking);
     if (!booking) return;
@@ -286,43 +149,6 @@ export default function OwnerDashboardPage() {
     } catch (err) {
       showToast('Gagal menyimpan harga.', 'error');
     }
-=======
-  const handleMarkAsPaid = (bookingCode) => {
-    const booking = bookings.find(b => b.bookingCode === bookingCode);
-    if (!booking) return;
-    const updated = bookings.map(b => {
-      if (b.bookingCode !== bookingCode) return b;
-      
-      let method = b.paymentMethod;
-      if (!method) {
-        method = b.paymentStatus === 'Pay at Hotel' ? 'Bayar di Hotel' : 'Transfer Bank';
-      }
-      
-      return { ...b, paymentStatus:'Paid', paymentMethod: method, totalRevenue: getRevenue(b),
-               paidAt: new Date().toISOString(), confirmedBy:'owner' };
-    });
-    setBookings(updated);
-    localStorage.setItem('hotel_bookings', JSON.stringify(updated));
-    showToast(`Booking ${bookingCode} berhasil dikonfirmasi Lunas!`);
-    window.dispatchEvent(new Event('storage'));
-  };
-
-  const handleCancelBooking = (bookingCode) => {
-    if (!window.confirm(`Batalkan booking ${bookingCode}?`)) return;
-    const updated = bookings.filter(b => b.bookingCode !== bookingCode);
-    setBookings(updated);
-    localStorage.setItem('hotel_bookings', JSON.stringify(updated));
-    showToast(`Booking ${bookingCode} dibatalkan.`);
-    window.dispatchEvent(new Event('storage'));
-  };
-
-  const handlePriceChange = (roomId, val) =>
-    setRooms(prev => prev.map(r => r.id === roomId ? {...r, price: Number(val)} : r));
-
-  const handleSavePrices = () => {
-    localStorage.setItem('hotel_rooms', JSON.stringify(rooms));
-    showToast('Harga kamar berhasil disimpan!');
->>>>>>> upstream/main
   };
 
   const navItems = [
@@ -336,16 +162,10 @@ export default function OwnerDashboardPage() {
   // ── Trend Chart Calculations ─────────────────────────────────
   const getTrendData = () => {
     const data = [];
-    const today = new Date();
-<<<<<<< HEAD
-=======
-    // 7 days surrounding today (-3 to +3 days)
->>>>>>> upstream/main
-    for (let i = -3; i <= 3; i++) {
+    const today = new Date();    for (let i = -3; i <= 3; i++) {
       const d = new Date(today);
       d.setDate(today.getDate() + i);
       const dateStr = d.toISOString().split('T')[0];
-<<<<<<< HEAD
 
       const dayBks = bookings.filter(b => {
         if (!b.date_in) return false;
@@ -355,13 +175,6 @@ export default function OwnerDashboardPage() {
       const paidRev = dayBks.filter(b => b.status_payment === 'paid').reduce((s, b) => s + (b.total_payment || 0), 0);
       const totalRev = dayBks.reduce((s, b) => s + (b.total_payment || 0), 0);
 
-=======
-      
-      const dayBookings = bookings.filter(b => b.checkIn === dateStr && b.paymentStatus !== 'Cancelled');
-      const paidRev = dayBookings.filter(b => b.paymentStatus === 'Paid').reduce((s, b) => s + getRevenue(b), 0);
-      const totalRev = dayBookings.reduce((s, b) => s + getRevenue(b), 0);
-      
->>>>>>> upstream/main
       const label = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
       data.push({ dateStr, label, paidRev, totalRev });
     }
@@ -369,24 +182,15 @@ export default function OwnerDashboardPage() {
   };
 
   const trendData = getTrendData();
-<<<<<<< HEAD
   const maxRevenueInTrend = Math.max(...trendData.map(d => d.totalRev), 350000);
 
-=======
-  const maxRevenueInTrend = Math.max(...trendData.map(d => d.totalRev), 350000); // base scale 350k (1 night of VIP)
-  
->>>>>>> upstream/main
   const chartWidth = 800;
   const chartHeight = 220;
   const paddingX = 75;
   const paddingY = 25;
   const paddingRight = 30;
   const paddingBottom = 35;
-<<<<<<< HEAD
 
-=======
-  
->>>>>>> upstream/main
   const points = trendData.map((d, index) => {
     const x = paddingX + (index * (chartWidth - paddingX - paddingRight)) / (trendData.length - 1);
     const yPaid = chartHeight - paddingBottom - (d.paidRev / maxRevenueInTrend) * (chartHeight - paddingY - paddingBottom);
@@ -397,11 +201,7 @@ export default function OwnerDashboardPage() {
   let areaPaidPath = "";
   let linePaidPath = "";
   let lineTotalPath = "";
-<<<<<<< HEAD
 
-=======
-  
->>>>>>> upstream/main
   if (points.length > 0) {
     linePaidPath = `M ${points[0].x} ${points[0].yPaid} ` + points.slice(1).map(p => `L ${p.x} ${p.yPaid}`).join(' ');
     areaPaidPath = `${linePaidPath} L ${points[points.length-1].x} ${chartHeight - paddingBottom} L ${points[0].x} ${chartHeight - paddingBottom} Z`;
@@ -410,16 +210,10 @@ export default function OwnerDashboardPage() {
 
   // Donut Chart calculations
   const getDonutData = () => {
-<<<<<<< HEAD
     const counts = {};
     bookings.filter(b => b.status_payment !== 'cancelled').forEach(b => {
       const name = getRoomName(b.id_room);
       counts[name] = (counts[name] || 0) + 1;
-=======
-    const counts = { 'Economy Room': 0, 'Standard Room': 0, 'VIP Suite': 0 };
-    bookings.filter(b => b.paymentStatus !== 'Cancelled').forEach(b => {
-      if (counts[b.roomType] !== undefined) counts[b.roomType]++;
->>>>>>> upstream/main
     });
     const total = Object.values(counts).reduce((s, c) => s + c, 0);
     return Object.entries(counts).map(([name, count]) => ({
@@ -429,7 +223,6 @@ export default function OwnerDashboardPage() {
     }));
   };
   const donutData = getDonutData();
-<<<<<<< HEAD
   const totalBookingsCount = bookings.filter(b => b.status_payment !== 'cancelled').length;
 
   let accumulatedPercent = 0;
@@ -442,32 +235,6 @@ export default function OwnerDashboardPage() {
 
     const colors = ['var(--color-gold)', '#3b82f6', '#10b981'];
     return { ...d, radius, circumference, strokeDasharray, strokeDashoffset, color: colors[i] };
-=======
-  const totalBookingsCount = bookings.filter(b => b.paymentStatus !== 'Cancelled').length;
-  
-  let accumulatedPercent = 0;
-  const donutCircles = donutData.map((d, i) => {
-    const radius = 50;
-    const circumference = 2 * Math.PI * radius; // 314.16
-    const strokeDasharray = `${(d.percentage * circumference) / 100} ${circumference}`;
-    const strokeDashoffset = `${- (accumulatedPercent * circumference) / 100}`;
-    accumulatedPercent += d.percentage;
-    
-    const colors = [
-      'var(--color-gold)', // Economy
-      '#3b82f6', // Standard
-      '#10b981'  // VIP
-    ];
-    
-    return {
-      ...d,
-      radius,
-      circumference,
-      strokeDasharray,
-      strokeDashoffset,
-      color: colors[i]
-    };
->>>>>>> upstream/main
   });
 
   // ── Auth guards ───────────────────────────────────────────────
@@ -493,12 +260,7 @@ export default function OwnerDashboardPage() {
   );
 
   return (
-    <div className="portal-layout">
-<<<<<<< HEAD
-=======
-      {/* ── SIDEBAR ─────────────────────────────────────── */}
->>>>>>> upstream/main
-      <aside className="sidebar">
+    <div className="portal-layout">      <aside className="sidebar">
         <div className="sb-brand">
           <img src="/assets/logo.png" alt="Hotel Arca" style={{height:'36px',width:'auto'}} />
           <div className="sb-brand-text">
@@ -518,11 +280,7 @@ export default function OwnerDashboardPage() {
         </nav>
         <div className="sb-bottom">
           <Link href="/" className="sb-link"><FaHome /><span>Back to Website</span></Link>
-<<<<<<< HEAD
           <button onClick={() => { clearAuth(); window.location.href='/owner/login'; }} className="sb-logout">
-=======
-          <button onClick={() => { localStorage.removeItem('currentUser'); window.location.href='/owner/login'; }} className="sb-logout">
->>>>>>> upstream/main
             <FaSignOutAlt /><span>Logout</span>
           </button>
           <div className="sb-avatar">
@@ -534,11 +292,6 @@ export default function OwnerDashboardPage() {
           </div>
         </div>
       </aside>
-
-<<<<<<< HEAD
-=======
-      {/* ── MAIN ───────────────────────────────────────── */}
->>>>>>> upstream/main
       <main className="main-content">
         {toastMessage && (
           <div className={`toast ${toastType==='error'?'toast-err':''}`}>
@@ -555,7 +308,6 @@ export default function OwnerDashboardPage() {
                 <h1 className="pg-title">Executive Overview</h1>
                 <p className="pg-sub">Live performance — Arca Hotel · {new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</p>
               </div>
-<<<<<<< HEAD
               <button className="refresh-btn" onClick={loadData}>↻ Refresh</button>
             </div>
 
@@ -567,67 +319,25 @@ export default function OwnerDashboardPage() {
               </div>
               <div className="rev-card rev-pending-tf">
                 <div className="rc-top"><FaUniversity className="rc-icon" /><span className="rc-label">Pending Transfer Bank</span></div>
-=======
-              <button className="refresh-btn" onClick={reloadAll}>↻ Refresh</button>
-            </div>
-
-            {/* ── Revenue Cards Row ── */}
-            <div className="rev-cards-row">
-              <div className="rev-card rev-confirmed">
-                <div className="rc-top">
-                  <FaCheckCircle className="rc-icon" />
-                  <span className="rc-label">Revenue Terkonfirmasi</span>
-                </div>
-                <div className="rc-value">{formatIDR(confirmedRevenue)}</div>
-                <div className="rc-sub">{paidBookings.length} booking Lunas</div>
-              </div>
-              <div className="rev-card rev-pending-tf">
-                <div className="rc-top">
-                  <FaUniversity className="rc-icon" />
-                  <span className="rc-label">Pending Transfer Bank</span>
-                </div>
->>>>>>> upstream/main
                 <div className="rc-value">{formatIDR(pendingTFRevenue)}</div>
                 <div className="rc-sub">{awaitingTF.length} booking menunggu konfirmasi</div>
               </div>
               <div className="rev-card rev-pending-cash">
-<<<<<<< HEAD
                 <div className="rc-top"><FaMoneyBillWave className="rc-icon" /><span className="rc-label">Pending Bayar di Hotel</span></div>
-=======
-                <div className="rc-top">
-                  <FaMoneyBillWave className="rc-icon" />
-                  <span className="rc-label">Pending Bayar di Hotel</span>
-                </div>
->>>>>>> upstream/main
                 <div className="rc-value">{formatIDR(pendingCashRevenue)}</div>
                 <div className="rc-sub">{payHotel.length} booking bayar saat check-in</div>
               </div>
               <div className="rev-card rev-total">
-<<<<<<< HEAD
                 <div className="rc-top"><FaChartLine className="rc-icon" /><span className="rc-label">Estimasi Total Revenue</span></div>
-=======
-                <div className="rc-top">
-                  <FaChartLine className="rc-icon" />
-                  <span className="rc-label">Estimasi Total Revenue</span>
-                </div>
->>>>>>> upstream/main
                 <div className="rc-value">{formatIDR(totalExpected)}</div>
                 <div className="rc-sub">Semua booking aktif</div>
               </div>
             </div>
 
-<<<<<<< HEAD
             <div className="stats-grid">
               {[
                 { icon:<FaClipboardList/>, label:'Total Booking',    value:bookings.length,   color:'blue' },
                 { icon:<FaCheckCircle/>,   label:'Lunas',            value:paidBookets.length, color:'green' },
-=======
-            {/* Stats */}
-            <div className="stats-grid">
-              {[
-                { icon:<FaClipboardList/>, label:'Total Booking',    value:bookings.length,   color:'blue' },
-                { icon:<FaCheckCircle/>,   label:'Lunas',            value:paidBookings.length, color:'green' },
->>>>>>> upstream/main
                 { icon:<FaUniversity/>,    label:'TF Menunggu',      value:awaitingTF.length, color:'yellow' },
                 { icon:<FaDoorOpen/>,      label:'Kamar Tersedia',   value:`${availableCount}/${rooms.length}`, color:'teal' },
               ].map((s,i)=>(
@@ -641,17 +351,12 @@ export default function OwnerDashboardPage() {
               ))}
             </div>
 
-<<<<<<< HEAD
             {/* Chart */}
-=======
-            {/* ── Area Trend Chart ── */}
->>>>>>> upstream/main
             <div className="cc" style={{ position: 'relative' }}>
               <div className="cc-hdr">
                 <h2 className="cc-title">Tren Pendapatan Harian (7 Hari Terakhir & Mendatang)</h2>
                 <div style={{ display: 'flex', gap: '15px', fontSize: '.75rem', fontWeight: 600 }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-<<<<<<< HEAD
                     <span style={{ display: 'inline-block', width: '10px', height: '10px', background: 'var(--color-gold)', borderRadius: '50%' }}></span> Lunas
                   </span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -659,18 +364,6 @@ export default function OwnerDashboardPage() {
                   </span>
                 </div>
               </div>
-=======
-                    <span style={{ display: 'inline-block', width: '10px', height: '10px', background: 'var(--color-gold)', borderRadius: '50%' }}></span>
-                    Lunas
-                  </span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    <span style={{ display: 'inline-block', width: '10px', height: '10px', background: '#3b82f6', borderRadius: '50%', border: '1px dashed #3b82f6' }}></span>
-                    Estimasi Total
-                  </span>
-                </div>
-              </div>
-              
->>>>>>> upstream/main
               <div style={{ position: 'relative', marginTop: '10px', overflowX: 'auto' }}>
                 <svg viewBox="0 0 800 220" width="100%" height="220" style={{ overflow: 'visible', minWidth: '700px' }}>
                   <defs>
@@ -678,13 +371,7 @@ export default function OwnerDashboardPage() {
                       <stop offset="0%" stopColor="var(--color-gold)" stopOpacity="0.25" />
                       <stop offset="100%" stopColor="var(--color-gold)" stopOpacity="0.0" />
                     </linearGradient>
-                  </defs>
-<<<<<<< HEAD
-=======
-                  
-                  {/* Grid Lines */}
->>>>>>> upstream/main
-                  {[0, 0.25, 0.5, 0.75, 1].map((r, i) => {
+                  </defs>                  {[0, 0.25, 0.5, 0.75, 1].map((r, i) => {
                     const y = paddingY + r * (chartHeight - paddingY - paddingBottom);
                     const val = maxRevenueInTrend * (1 - r);
                     return (
@@ -694,28 +381,13 @@ export default function OwnerDashboardPage() {
                       </g>
                     );
                   })}
-<<<<<<< HEAD
                   {areaPaidPath && <path d={areaPaidPath} fill="url(#paidAreaGrad)" />}
                   {linePaidPath && <path d={linePaidPath} fill="none" stroke="var(--color-gold)" strokeWidth="3" strokeLinecap="round" />}
                   {lineTotalPath && <path d={lineTotalPath} fill="none" stroke="#3b82f6" strokeWidth="2" strokeDasharray="4,4" strokeLinecap="round" />}
-=======
-                  
-                  {/* Area (Paid) */}
-                  {areaPaidPath && <path d={areaPaidPath} fill="url(#paidAreaGrad)" />}
-                  
-                  {/* Line (Paid) */}
-                  {linePaidPath && <path d={linePaidPath} fill="none" stroke="var(--color-gold)" strokeWidth="3" strokeLinecap="round" />}
-                  
-                  {/* Line (Total Expected) */}
-                  {lineTotalPath && <path d={lineTotalPath} fill="none" stroke="#3b82f6" strokeWidth="2" strokeDasharray="4,4" strokeLinecap="round" />}
-                  
-                  {/* Interactive guides & X-axis */}
->>>>>>> upstream/main
                   {points.map((p, i) => (
                     <g key={i}>
                       <line x1={p.x} y1={paddingY} x2={p.x} y2={chartHeight - paddingBottom} stroke="#e8e8e4" strokeWidth="1" strokeDasharray="2,2" opacity="0.4" />
                       <text x={p.x} y={chartHeight - 12} fill="#6b7280" fontSize="10" fontWeight="600" textAnchor="middle">{p.label}</text>
-<<<<<<< HEAD
                       <rect x={p.x - 25} y={paddingY} width="50" height={chartHeight - paddingY - paddingBottom} fill="transparent" cursor="pointer"
                         onMouseEnter={() => setHoveredPointIndex(i)} onMouseLeave={() => setHoveredPointIndex(null)} />
                     </g>
@@ -726,44 +398,10 @@ export default function OwnerDashboardPage() {
                       <circle cx={points[hoveredPointIndex].x} cy={points[hoveredPointIndex].yPaid} r="6" fill="var(--color-gold)" stroke="white" strokeWidth="2" />
                       <circle cx={points[hoveredPointIndex].x} cy={points[hoveredPointIndex].yTotal} r="4" fill="#3b82f6" stroke="white" strokeWidth="1.5" />
                       {(() => {
-=======
-                      
-                      {/* Invisible hover helper */}
-                      <rect 
-                        x={p.x - 25} y={paddingY} width="50" height={chartHeight - paddingY - paddingBottom} 
-                        fill="transparent" 
-                        cursor="pointer"
-                        onMouseEnter={() => setHoveredPointIndex(i)}
-                        onMouseLeave={() => setHoveredPointIndex(null)}
-                      />
-                    </g>
-                  ))}
-
-                  {/* Hover circle overlay */}
-                  {hoveredPointIndex !== null && points[hoveredPointIndex] && (
-                    <g pointerEvents="none">
-                      <line 
-                        x1={points[hoveredPointIndex].x} y1={paddingY} 
-                        x2={points[hoveredPointIndex].x} y2={chartHeight - paddingBottom} 
-                        stroke="var(--color-gold)" strokeWidth="1.5" opacity="0.6" 
-                      />
-                      <circle 
-                        cx={points[hoveredPointIndex].x} cy={points[hoveredPointIndex].yPaid} 
-                        r="6" fill="var(--color-gold)" stroke="white" strokeWidth="2" 
-                      />
-                      <circle 
-                        cx={points[hoveredPointIndex].x} cy={points[hoveredPointIndex].yTotal} 
-                        r="4" fill="#3b82f6" stroke="white" strokeWidth="1.5" 
-                      />
-                      {/* SVG Tooltip */}
-                      {(() => {
-                        if (hoveredPointIndex === null || !points[hoveredPointIndex]) return null;
->>>>>>> upstream/main
                         const pX = points[hoveredPointIndex].x;
                         const tooltipRectX = Math.max(10, Math.min(620, pX - 85));
                         const textX = tooltipRectX + 85;
                         const tooltipY = Math.max(10, Math.min(140, Math.min(points[hoveredPointIndex].yPaid, points[hoveredPointIndex].yTotal) - 80));
-<<<<<<< HEAD
                         return (
                           <g pointerEvents="none">
                             <rect x={tooltipRectX} y={tooltipY} width="170" height="70" rx="8" fill="rgba(10, 37, 64, 0.96)" stroke="var(--color-gold)" strokeWidth="1.5" />
@@ -772,72 +410,6 @@ export default function OwnerDashboardPage() {
                             <text x={textX + 70} y={tooltipY + 40} textAnchor="end" fill="var(--color-gold)" style={{ fontSize: '9px', fontWeight: '700' }}>{formatIDR(points[hoveredPointIndex].paidRev)}</text>
                             <text x={textX - 70} y={tooltipY + 56} textAnchor="start" fill="white" style={{ fontSize: '9px' }}>📊 Total:</text>
                             <text x={textX + 70} y={tooltipY + 56} textAnchor="end" fill="#93c5fd" style={{ fontSize: '9px', fontWeight: '700' }}>{formatIDR(points[hoveredPointIndex].totalRev)}</text>
-=======
-                        
-                        return (
-                          <g pointerEvents="none" style={{ transition: 'all 0.1s ease-out' }}>
-                            {/* Tooltip Background */}
-                            <rect
-                              x={tooltipRectX}
-                              y={tooltipY}
-                              width="170"
-                              height="70"
-                              rx="8"
-                              fill="rgba(10, 37, 64, 0.96)"
-                              stroke="var(--color-gold)"
-                              strokeWidth="1.5"
-                            />
-                            {/* Title: Date */}
-                            <text
-                              x={textX}
-                              y={tooltipY + 20}
-                              textAnchor="middle"
-                              fill="var(--color-gold)"
-                              style={{ fontSize: '10px', fontWeight: '700' }}
-                            >
-                              {points[hoveredPointIndex].label}
-                            </text>
-                            {/* Lunas label */}
-                            <text
-                              x={textX - 70}
-                              y={tooltipY + 40}
-                              textAnchor="start"
-                              fill="white"
-                              style={{ fontSize: '9px' }}
-                            >
-                              ✓ Lunas:
-                            </text>
-                            {/* Lunas value */}
-                            <text
-                              x={textX + 70}
-                              y={tooltipY + 40}
-                              textAnchor="end"
-                              fill="var(--color-gold)"
-                              style={{ fontSize: '9px', fontWeight: '700' }}
-                            >
-                              {formatIDR(points[hoveredPointIndex].paidRev)}
-                            </text>
-                            {/* Total label */}
-                            <text
-                              x={textX - 70}
-                              y={tooltipY + 56}
-                              textAnchor="start"
-                              fill="white"
-                              style={{ fontSize: '9px' }}
-                            >
-                              📊 Total:
-                            </text>
-                            {/* Total value */}
-                            <text
-                              x={textX + 70}
-                              y={tooltipY + 56}
-                              textAnchor="end"
-                              fill="#93c5fd"
-                              style={{ fontSize: '9px', fontWeight: '700' }}
-                            >
-                              {formatIDR(points[hoveredPointIndex].totalRev)}
-                            </text>
->>>>>>> upstream/main
                           </g>
                         );
                       })()}
@@ -847,22 +419,10 @@ export default function OwnerDashboardPage() {
               </div>
             </div>
 
-<<<<<<< HEAD
             <div className="two-col">
               <div className="cc">
                 <div className="cc-hdr"><h2 className="cc-title">Revenue & Volume per Tipe Kamar</h2></div>
                 <div className="revenue-widget-split">
-=======
-            {/* Two column */}
-            <div className="two-col">
-              {/* Revenue & Volume per Tipe Kamar */}
-              <div className="cc">
-                <div className="cc-hdr">
-                  <h2 className="cc-title">Revenue & Volume per Tipe Kamar</h2>
-                </div>
-                <div className="revenue-widget-split">
-                  {/* Left Column: Progress Bars */}
->>>>>>> upstream/main
                   <div className="rev-progress-col">
                     <h3 style={{ fontSize: '.78rem', color: '#6b7280', marginBottom: '12px', fontWeight: 600 }}>Nilai Transaksi Lunas</h3>
                     {revenueByType.map(item => (
@@ -878,19 +438,9 @@ export default function OwnerDashboardPage() {
                       </div>
                     ))}
                     {confirmedRevenue === 0 && (
-<<<<<<< HEAD
                       <div className="empty-state" style={{ padding: '20px 0' }}><p style={{ fontSize: '.8rem' }}>Belum ada booking yang dikonfirmasi Lunas.</p></div>
                     )}
                   </div>
-=======
-                      <div className="empty-state" style={{ padding: '20px 0' }}>
-                        <p style={{ fontSize: '.8rem' }}>Belum ada booking yang dikonfirmasi Lunas.</p>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Right Column: Donut Chart */}
->>>>>>> upstream/main
                   <div className="rev-donut-col">
                     <h3 style={{ fontSize: '.78rem', color: '#6b7280', marginBottom: '12px', fontWeight: 600, textAlign: 'center' }}>Volume Transaksi Aktif</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', position: 'relative' }}>
@@ -898,7 +448,6 @@ export default function OwnerDashboardPage() {
                         <svg viewBox="0 0 160 160" width="100" height="100">
                           <circle cx="80" cy="80" r="50" fill="none" stroke="#f0ede8" strokeWidth="14" />
                           {donutCircles.map((c, i) => (
-<<<<<<< HEAD
                             <circle key={i} cx="80" cy="80" r="50" fill="none" stroke={c.color} strokeWidth="14"
                               strokeDasharray={c.strokeDasharray} strokeDashoffset={c.strokeDashoffset}
                               transform="rotate(-90 80 80)" strokeLinecap={c.percentage > 0 ? "round" : "butt"}
@@ -909,43 +458,12 @@ export default function OwnerDashboardPage() {
                           <text x="80" y="94" textAnchor="middle" fontSize="8" fill="#888" style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total</text>
                         </svg>
                       </div>
-=======
-                            <circle
-                              key={i}
-                              cx="80"
-                              cy="80"
-                              r="50"
-                              fill="none"
-                              stroke={c.color}
-                              strokeWidth="14"
-                              strokeDasharray={c.strokeDasharray}
-                              strokeDashoffset={c.strokeDashoffset}
-                              transform="rotate(-90 80 80)"
-                              strokeLinecap={c.percentage > 0 ? "round" : "butt"}
-                              style={{ transition: 'stroke-dashoffset 0.5s ease' }}
-                            />
-                          ))}
-                          <circle cx="80" cy="80" r="40" fill="white" />
-                          <text x="80" y="83" textAnchor="middle" fontSize="13" fontWeight="800" fill="var(--color-blue-deep)">
-                            {totalBookingsCount}
-                          </text>
-                          <text x="80" y="94" textAnchor="middle" fontSize="8" fill="#888" style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                            Total
-                          </text>
-                        </svg>
-                      </div>
-                      
->>>>>>> upstream/main
                       <div className="donut-legend" style={{ width: '100%' }}>
                         {donutCircles.map((c, i) => (
                           <div key={i} className="donut-legend-item" style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
                             <span className="legend-dot" style={{ backgroundColor: c.color, width: '8px', height: '8px', borderRadius: '50%', display: 'inline-block' }}></span>
                             <span className="legend-text" style={{ fontSize: '0.7rem', color: '#555' }}>
-<<<<<<< HEAD
                               <strong>{c.count}</strong> {c.name?.split(' ')[0] || '?'} ({Math.round(c.percentage)}%)
-=======
-                              <strong>{c.count}</strong> {c.name.split(' ')[0]} ({Math.round(c.percentage)}%)
->>>>>>> upstream/main
                             </span>
                           </div>
                         ))}
@@ -954,11 +472,6 @@ export default function OwnerDashboardPage() {
                   </div>
                 </div>
               </div>
-
-<<<<<<< HEAD
-=======
-              {/* TF needing confirmation */}
->>>>>>> upstream/main
               <div className="cc">
                 <div className="cc-hdr">
                   <h2 className="cc-title">Transfer Bank — Perlu Konfirmasi</h2>
@@ -971,7 +484,6 @@ export default function OwnerDashboardPage() {
                     {awaitingTF.map((b,i) => (
                       <div key={i} className="quick-item">
                         <div>
-<<<<<<< HEAD
                           <span className="code-badge" style={{fontSize:'.68rem'}}><FaTicketAlt /> #{b.id_booking}</span>
                           <p style={{margin:'6px 0 2px',fontWeight:600,fontSize:'.88rem',color:'var(--color-blue-deep)'}}>{currentUser?.name || 'Tamu'}</p>
                           <p style={{margin:'0 0 2px',fontSize:'.75rem',color:'#6b7280'}}>Kamar {getRoomNumber(b.id_room)} — {getRoomName(b.id_room)}</p>
@@ -980,16 +492,6 @@ export default function OwnerDashboardPage() {
                         <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:'8px'}}>
                           <span style={{fontWeight:700,color:'#b45309',fontSize:'.92rem'}}>{formatIDR(b.total_payment)}</span>
                           <button onClick={() => handleMarkAsPaid(b.id_booking)} className="btn-paid">
-=======
-                          <span className="code-badge" style={{fontSize:'.68rem'}}><FaTicketAlt /> {b.bookingCode}</span>
-                          <p style={{margin:'6px 0 2px',fontWeight:600,fontSize:'.88rem',color:'var(--color-blue-deep)'}}>{b.guestName}</p>
-                          {b.roomNumber && <p style={{margin:'0 0 2px',fontSize:'.75rem',color:'#6b7280'}}>Kamar {b.roomNumber} — {b.roomType}</p>}
-                          <p style={{margin:0,fontSize:'.75rem',color:'#6b7280'}}>{b.paymentMethod} · {b.nights} malam</p>
-                        </div>
-                        <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:'8px'}}>
-                          <span style={{fontWeight:700,color:'#b45309',fontSize:'.92rem'}}>{formatIDR(getRevenue(b))}</span>
-                          <button onClick={() => handleMarkAsPaid(b.bookingCode)} className="btn-paid">
->>>>>>> upstream/main
                             <FaCheck /> Konfirmasi Lunas
                           </button>
                         </div>
@@ -1000,31 +502,18 @@ export default function OwnerDashboardPage() {
               </div>
             </div>
 
-<<<<<<< HEAD
             <div className="cc">
               <div className="cc-hdr">
                 <h2 className="cc-title">Status {rooms.length} Kamar</h2>
-=======
-            {/* Room mini grid */}
-            <div className="cc">
-              <div className="cc-hdr">
-                <h2 className="cc-title">Status 18 Kamar</h2>
->>>>>>> upstream/main
                 <span style={{fontSize:'.8rem',color:'#6b7280'}}>{availableCount} tersedia · {occupiedCount} terpesan</span>
               </div>
               <div className="room-grid-mini">
                 {rooms.map(room => {
                   const bk = getRoomBooking(room);
                   return (
-<<<<<<< HEAD
                     <div key={room.id_room} className={`rgm-card ${bk?'rgm-occ':'rgm-avail'}`}>
                       <span className="rgm-num">{room.room_number}</span>
                       <span className="rgm-type">{room.room_type?.name==='Economy Room'?'ECO':room.room_type?.name==='Standard Room'?'STD':'VIP'}</span>
-=======
-                    <div key={room.roomNumber} className={`rgm-card ${bk?'rgm-occ':'rgm-avail'}`}>
-                      <span className="rgm-num">{room.roomNumber}</span>
-                      <span className="rgm-type">{room.name==='Economy Room'?'ECO':room.name==='Standard Room'?'STD':'VIP'}</span>
->>>>>>> upstream/main
                       <span className={`rgm-dot ${bk?'dot-red':'dot-green'}`}></span>
                     </div>
                   );
@@ -1042,7 +531,6 @@ export default function OwnerDashboardPage() {
                 <h1 className="pg-title">Booking List</h1>
                 <p className="pg-sub">Semua pemesanan. Owner mengkonfirmasi <strong>Transfer Bank</strong>. Staff mengkonfirmasi <strong>Cash</strong>.</p>
               </div>
-<<<<<<< HEAD
               <button className="refresh-btn" onClick={loadData}>↻ Refresh</button>
             </div>
 
@@ -1054,32 +542,6 @@ export default function OwnerDashboardPage() {
               <div className="rsb-item"><span className="rsb-label">⏳ Bayar Hotel</span><span className="rsb-val rsb-orange">{formatIDR(pendingCashRevenue)}</span></div>
               <div className="rsb-sep"></div>
               <div className="rsb-item"><span className="rsb-label">📊 Total Estimasi</span><span className="rsb-val rsb-gold">{formatIDR(totalExpected)}</span></div>
-=======
-              <button className="refresh-btn" onClick={reloadAll}>↻ Refresh</button>
-            </div>
-
-            {/* Revenue summary bar */}
-            <div className="rev-summary-bar">
-              <div className="rsb-item">
-                <span className="rsb-label">✓ Revenue Dikonfirmasi</span>
-                <span className="rsb-val rsb-green">{formatIDR(confirmedRevenue)}</span>
-              </div>
-              <div className="rsb-sep"></div>
-              <div className="rsb-item">
-                <span className="rsb-label">🔄 Pending TF</span>
-                <span className="rsb-val rsb-blue">{formatIDR(pendingTFRevenue)}</span>
-              </div>
-              <div className="rsb-sep"></div>
-              <div className="rsb-item">
-                <span className="rsb-label">⏳ Bayar Hotel</span>
-                <span className="rsb-val rsb-orange">{formatIDR(pendingCashRevenue)}</span>
-              </div>
-              <div className="rsb-sep"></div>
-              <div className="rsb-item">
-                <span className="rsb-label">📊 Total Estimasi</span>
-                <span className="rsb-val rsb-gold">{formatIDR(totalExpected)}</span>
-              </div>
->>>>>>> upstream/main
             </div>
 
             <div className="cc">
@@ -1092,19 +554,12 @@ export default function OwnerDashboardPage() {
                 <div className="table-responsive">
                   <table className="dt">
                     <thead><tr>
-<<<<<<< HEAD
                       <th>ID Booking</th><th>Kamar</th><th>Tipe</th>
                       <th>Check-in</th><th>Check-out</th><th>Durasi</th>
-=======
-                      <th>Kode Booking</th><th>Nama Tamu</th><th>Telepon</th><th>Domisili</th>
-                      <th>No. Kamar</th><th>Tipe</th><th>Check-in</th><th>Check-out</th>
-                      <th>Durasi</th><th>Tamu</th><th>Drink</th><th>Metode</th>
->>>>>>> upstream/main
                       <th>Status</th><th>Revenue</th><th>Aksi</th>
                     </tr></thead>
                     <tbody>
                       {bookings.map((b,i) => {
-<<<<<<< HEAD
                         const canConfirm = b.status_payment !== 'paid' && b.status_payment !== 'cancelled';
                         return (
                           <tr key={b.id_booking||i}>
@@ -1128,43 +583,6 @@ export default function OwnerDashboardPage() {
                                   </button>
                                 )}
                                 <button onClick={() => handleCancelBooking(b.id_booking)} className="btn-cancel" title="Batalkan">
-=======
-                        const canConfirm = b.paymentStatus !== 'Paid' && b.paymentStatus !== 'Cancelled';
-                        const revenue = getRevenue(b);
-                        return (
-                          <tr key={b.bookingCode||i}>
-                            <td><span className="code-badge"><FaTicketAlt /> {b.bookingCode}</span></td>
-                            <td><strong>{b.guestName}</strong></td>
-                            <td style={{fontSize:'.8rem'}}>{b.phoneNumber||'-'}</td>
-                            <td style={{fontSize:'.8rem'}}>{b.domicile||'-'}</td>
-                            <td>{b.roomNumber ? <span className="room-num-badge">{b.roomNumber}</span> : '-'}</td>
-                            <td><span className="room-tag">{b.roomType}</span></td>
-                            <td className="date-cell">{formatDate(b.checkIn)}</td>
-                            <td className="date-cell">{formatDate(b.checkOut)}</td>
-                            <td><span className="dur-badge">{b.nights} Mlm</span></td>
-                            <td style={{fontSize:'.82rem'}}>{b.guestsCount} Org</td>
-                            <td><span className="drink-tag">{b.welcomeDrink}</span></td>
-                            <td style={{fontSize:'.75rem',maxWidth:'120px'}}>{b.paymentMethod||'-'}</td>
-                            <td>
-                              <span className={`pill ${b.paymentStatus==='Paid'?'pill-g':b.paymentStatus==='Pay at Hotel'?'pill-o':b.paymentStatus==='Awaiting Confirmation'?'pill-b':'pill-r'}`}>
-                                {b.paymentStatus==='Paid'?'✓ Lunas':b.paymentStatus==='Pay at Hotel'?'⏳ Bayar Hotel':b.paymentStatus==='Awaiting Confirmation'?'🔄 Menunggu':'⚠ Belum Bayar'}
-                              </span>
-                              {b.confirmedBy && <div style={{fontSize:'.62rem',color:'#9ca3af',marginTop:'2px'}}>oleh {b.confirmedBy}</div>}
-                            </td>
-                            <td>
-                              <strong style={{color:b.paymentStatus==='Paid'?'#16a34a':'#6b7280',fontSize:'.84rem',whiteSpace:'nowrap'}}>
-                                {formatIDR(revenue)}
-                              </strong>
-                            </td>
-                            <td>
-                              <div style={{display:'flex',gap:'5px',flexWrap:'wrap'}}>
-                                {canConfirm && (
-                                  <button onClick={() => handleMarkAsPaid(b.bookingCode)} className="btn-paid" title="Konfirmasi Lunas">
-                                    <FaCheck /> Konfirmasi
-                                  </button>
-                                )}
-                                <button onClick={() => handleCancelBooking(b.bookingCode)} className="btn-cancel" title="Batalkan">
->>>>>>> upstream/main
                                   <FaTrash />
                                 </button>
                               </div>
@@ -1188,16 +606,9 @@ export default function OwnerDashboardPage() {
                 <h1 className="pg-title">Revenue & Analitik</h1>
                 <p className="pg-sub">Laporan keuangan Hotel Arca.</p>
               </div>
-<<<<<<< HEAD
               <button className="refresh-btn" onClick={loadData}>↻ Refresh</button>
             </div>
 
-=======
-              <button className="refresh-btn" onClick={reloadAll}>↻ Refresh</button>
-            </div>
-
-            {/* Revenue hero card */}
->>>>>>> upstream/main
             <div className="rev-hero">
               <div style={{display:'flex',alignItems:'center',gap:'20px'}}>
                 <FaMoneyBillWave style={{fontSize:'2.8rem',color:'var(--color-gold)'}} />
@@ -1208,30 +619,17 @@ export default function OwnerDashboardPage() {
                 </div>
               </div>
               <div style={{display:'flex',flexWrap:'wrap',gap:'8px'}}>
-<<<<<<< HEAD
                 <span className="rev-pill rp-green">✓ Lunas: {paidBookets.length}</span>
-=======
-                <span className="rev-pill rp-green">✓ Lunas: {paidBookings.length}</span>
->>>>>>> upstream/main
                 <span className="rev-pill rp-blue">🔄 TF Pending: {awaitingTF.length}</span>
                 <span className="rev-pill rp-orange">⏳ Bayar Hotel: {payHotel.length}</span>
                 <span className="rev-pill rp-red">⚠ Belum Bayar: {awaiting.length}</span>
               </div>
             </div>
-
-<<<<<<< HEAD
-=======
-            {/* Revenue cards */}
->>>>>>> upstream/main
             <div className="rev-cards-row" style={{marginBottom:'24px'}}>
               <div className="rev-card rev-confirmed">
                 <div className="rc-top"><FaCheckCircle className="rc-icon" /><span className="rc-label">Terkonfirmasi</span></div>
                 <div className="rc-value">{formatIDR(confirmedRevenue)}</div>
-<<<<<<< HEAD
                 <div className="rc-sub">{paidBookets.length} booking</div>
-=======
-                <div className="rc-sub">{paidBookings.length} booking</div>
->>>>>>> upstream/main
               </div>
               <div className="rev-card rev-pending-tf">
                 <div className="rc-top"><FaUniversity className="rc-icon" /><span className="rc-label">TF Pending</span></div>
@@ -1249,11 +647,6 @@ export default function OwnerDashboardPage() {
                 <div className="rc-sub">Semua booking aktif</div>
               </div>
             </div>
-
-<<<<<<< HEAD
-=======
-            {/* Revenue per type */}
->>>>>>> upstream/main
             <div className="cc">
               <div className="cc-hdr"><h2 className="cc-title">Revenue per Tipe Kamar (Booking Lunas)</h2></div>
               {revenueByType.map(item => (
@@ -1272,22 +665,14 @@ export default function OwnerDashboardPage() {
               ))}
             </div>
 
-<<<<<<< HEAD
             <div className="cc">
               <div className="cc-hdr"><h2 className="cc-title">Daftar Booking Lunas <span className="badge-cnt">{paidBookets.length}</span></h2></div>
               {paidBookets.length === 0 ? (
-=======
-            {/* Paid bookings table */}
-            <div className="cc">
-              <div className="cc-hdr"><h2 className="cc-title">Daftar Booking Lunas <span className="badge-cnt">{paidBookings.length}</span></h2></div>
-              {paidBookings.length === 0 ? (
->>>>>>> upstream/main
                 <div className="empty-state"><p>Belum ada booking yang dikonfirmasi Lunas.</p></div>
               ) : (
                 <div className="table-responsive">
                   <table className="dt">
                     <thead><tr>
-<<<<<<< HEAD
                       <th>ID</th><th>No. Kamar</th><th>Tipe</th>
                       <th>Check-in</th><th>Check-out</th><th>Durasi</th>
                       <th>Revenue</th>
@@ -1302,26 +687,6 @@ export default function OwnerDashboardPage() {
                           <td className="date-cell">{formatDate(b.date_out)}</td>
                           <td><span className="dur-badge">{getNights(b)} Mlm</span></td>
                           <td><strong style={{color:'#16a34a',fontSize:'.88rem'}}>{formatIDR(b.total_payment)}</strong></td>
-=======
-                      <th>Kode</th><th>Tamu</th><th>No. Kamar</th><th>Tipe</th>
-                      <th>Check-in</th><th>Check-out</th><th>Durasi</th>
-                      <th>Metode</th><th>Revenue</th><th>Tgl Lunas</th><th>Dikonfirmasi</th>
-                    </tr></thead>
-                    <tbody>
-                      {paidBookings.map((b,i) => (
-                        <tr key={b.bookingCode||i}>
-                          <td><span className="code-badge"><FaTicketAlt /> {b.bookingCode}</span></td>
-                          <td><strong>{b.guestName}</strong></td>
-                          <td>{b.roomNumber ? <span className="room-num-badge">{b.roomNumber}</span> : '-'}</td>
-                          <td><span className="room-tag">{b.roomType}</span></td>
-                          <td className="date-cell">{formatDate(b.checkIn)}</td>
-                          <td className="date-cell">{formatDate(b.checkOut)}</td>
-                          <td><span className="dur-badge">{b.nights} Mlm</span></td>
-                          <td style={{fontSize:'.75rem'}}>{b.paymentMethod||'-'}</td>
-                          <td><strong style={{color:'#16a34a',fontSize:'.88rem'}}>{formatIDR(getRevenue(b))}</strong></td>
-                          <td className="date-cell">{b.paidAt ? formatDate(b.paidAt) : '-'}</td>
-                          <td><span className={`pill ${b.confirmedBy==='owner'?'pill-b':'pill-o'}`} style={{fontSize:'.68rem'}}>{b.confirmedBy||'staff'}</span></td>
->>>>>>> upstream/main
                         </tr>
                       ))}
                     </tbody>
@@ -1341,7 +706,6 @@ export default function OwnerDashboardPage() {
                 <p className="pg-sub">Ubah harga per malam untuk setiap tipe kamar. Perubahan langsung tersinkron ke halaman booking.</p>
               </div>
             </div>
-<<<<<<< HEAD
             {roomTypes.map(rt => (
               <div key={rt.id_room_type} className="cc" style={{maxWidth:'600px',marginBottom:'20px'}}>
                 <div className="cc-hdr">
@@ -1364,42 +728,6 @@ export default function OwnerDashboardPage() {
                 </div>
               </div>
             ))}
-=======
-            {/* Group by type for pricing */}
-            {['Economy Room','Standard Room','VIP Suite'].map(typeName => {
-              const typeRooms = rooms.filter(r => r.name === typeName);
-              if (!typeRooms.length) return null;
-              const firstRoom = typeRooms[0];
-              return (
-                <div key={typeName} className="cc" style={{maxWidth:'600px',marginBottom:'20px'}}>
-                  <div className="cc-hdr">
-                    <h2 className="cc-title">{typeName} ({typeRooms.length} kamar)</h2>
-                  </div>
-                  <p style={{fontSize:'.82rem',color:'#6b7280',marginBottom:'16px'}}>
-                    Kamar: {typeRooms.map(r=>r.roomNumber).join(', ')}
-                  </p>
-                  <div className="price-row">
-                    <div>
-                      <strong style={{display:'block',color:'var(--color-blue-deep)',marginBottom:'3px'}}>Harga per Malam</strong>
-                      <span style={{fontSize:'.8rem',color:'#6b7280'}}>Berlaku untuk semua kamar tipe {typeName}</span>
-                    </div>
-                    <div className="price-input-group">
-                      <span className="currency-prefix">Rp</span>
-                      <input
-                        type="number"
-                        value={firstRoom.price}
-                        onChange={(e) => {
-                          const newPrice = Number(e.target.value);
-                          setRooms(prev => prev.map(r => r.name === typeName ? {...r, price: newPrice} : r));
-                        }}
-                        className="price-input"
-                      />
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
->>>>>>> upstream/main
             <button onClick={handleSavePrices} className="save-btn">
               <FaSave /> Simpan Semua Harga
             </button>
@@ -1418,11 +746,7 @@ export default function OwnerDashboardPage() {
               {[['Nama',currentUser?.name||'Owner'],['Email',currentUser?.email||'owner@arca.com'],['Role','Owner']].map(([l,v])=>(
                 <div key={l} className="set-row"><span>{l}</span><strong>{v}</strong></div>
               ))}
-<<<<<<< HEAD
               <button onClick={() => { clearAuth(); window.location.href='/owner/login'; }}
-=======
-              <button onClick={() => { localStorage.removeItem('currentUser'); window.location.href='/owner/login'; }}
->>>>>>> upstream/main
                 style={{marginTop:'24px',background:'#ef4444',color:'white',border:'none',padding:'11px 22px',borderRadius:'8px',fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',gap:'8px'}}>
                 <FaSignOutAlt /> Logout
               </button>
@@ -1431,40 +755,12 @@ export default function OwnerDashboardPage() {
         )}
       </main>
 
-      <style jsx>{`
-<<<<<<< HEAD
-=======
-        /* Chart Styles */
->>>>>>> upstream/main
-        .revenue-widget-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; align-items: start; }
+      <style jsx>{`        .revenue-widget-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; align-items: start; }
         .rev-progress-col { display: flex; flex-direction: column; }
         .rev-donut-col { display: flex; flex-direction: column; border-left: 1px solid #f0ede8; padding-left: 20px; }
         .donut-legend { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; }
-<<<<<<< HEAD
         @media(max-width: 900px) { .revenue-widget-split { grid-template-columns: 1fr; gap: 20px; } .rev-donut-col { border-left: none; padding-left: 0; border-top: 1px solid #f0ede8; padding-top: 16px; } }
         .portal-layout{display:flex;min-height:100vh;font-family:'Inter',sans-serif;background:#f5f5f4}
-=======
-        .donut-legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; }
-        .legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
-        .legend-text { color: #4b5563; font-size: 0.72rem; }
-        
-        .chart-tooltip {
-          animation: tooltipFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) both;
-        }
-        @keyframes tooltipFadeIn {
-          from { opacity: 0; transform: translate(-50%, 4px); }
-          to { opacity: 1; transform: translate(-50%, 0); }
-        }
-
-        @media(max-width: 900px) {
-          .revenue-widget-split { grid-template-columns: 1fr; gap: 20px; }
-          .rev-donut-col { border-left: none; padding-left: 0; border-top: 1px solid #f0ede8; padding-top: 16px; }
-        }
-
-        /* Layout */
-        .portal-layout{display:flex;min-height:100vh;font-family:'Inter',sans-serif;background:#f5f5f4}
-        /* Sidebar */
->>>>>>> upstream/main
         .sidebar{width:220px;min-width:220px;background:#fff;border-right:1px solid #e8e8e4;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;box-shadow:2px 0 12px rgba(0,0,0,.04)}
         .sb-brand{display:flex;align-items:center;gap:12px;padding:24px 20px 20px;border-bottom:1px solid #f0ede8}
         .sb-brand-text{display:flex;flex-direction:column;line-height:1.2}
@@ -1482,22 +778,13 @@ export default function OwnerDashboardPage() {
         .av-circle{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--color-gold),#d4a84b);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.85rem;flex-shrink:0}
         .av-info{display:flex;flex-direction:column;line-height:1.2;overflow:hidden}
         .av-name{font-size:.82rem;font-weight:600;color:var(--color-blue-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .av-role{font-size:.68rem;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px}
-<<<<<<< HEAD
-=======
-        /* Main */
->>>>>>> upstream/main
-        .main-content{margin-left:220px;flex:1;min-height:100vh;min-width:0;width:calc(100% - 220px)}
+        .av-role{font-size:.68rem;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px}        .main-content{margin-left:220px;flex:1;min-height:100vh;min-width:0;width:calc(100% - 220px)}
         .cs{padding:36px 40px}
         .page-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
         .pg-title{font-family:var(--font-title);font-size:1.85rem;color:var(--color-blue-deep);font-weight:700;margin-bottom:5px}
         .pg-sub{color:#6b7280;font-size:.9rem}
         .refresh-btn{background:#fff;border:1px solid #e8e8e4;color:var(--color-gold);padding:8px 16px;border-radius:8px;font-weight:600;font-size:.82rem;cursor:pointer;transition:all .2s}
         .refresh-btn:hover{background:var(--color-gold);color:#fff}
-<<<<<<< HEAD
-=======
-        /* Revenue Cards Row */
->>>>>>> upstream/main
         .rev-cards-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
         .rev-card{border-radius:14px;padding:20px;border:1px solid}
         .rev-confirmed{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#bbf7d0}
@@ -1506,60 +793,29 @@ export default function OwnerDashboardPage() {
         .rev-total{background:linear-gradient(135deg,#fdf8ed,#fef3c7);border-color:#fde68a}
         .rc-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
         .rc-icon{font-size:1.1rem}
-<<<<<<< HEAD
         .rev-confirmed .rc-icon{color:#16a34a}.rev-pending-tf .rc-icon{color:#3b82f6}.rev-pending-cash .rc-icon{color:#ea580c}.rev-total .rc-icon{color:#d97706}
         .rc-label{font-size:.75rem;font-weight:600;color:#374151;text-transform:uppercase;letter-spacing:.5px}
         .rc-value{font-size:1.3rem;font-weight:800;color:#111827;margin-bottom:4px;line-height:1}
         .rc-sub{font-size:.72rem;color:#6b7280}
-=======
-        .rev-confirmed .rc-icon{color:#16a34a}
-        .rev-pending-tf .rc-icon{color:#3b82f6}
-        .rev-pending-cash .rc-icon{color:#ea580c}
-        .rev-total .rc-icon{color:#d97706}
-        .rc-label{font-size:.75rem;font-weight:600;color:#374151;text-transform:uppercase;letter-spacing:.5px}
-        .rc-value{font-size:1.3rem;font-weight:800;color:#111827;margin-bottom:4px;line-height:1}
-        .rc-sub{font-size:.72rem;color:#6b7280}
-        /* Stats */
->>>>>>> upstream/main
         .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:24px}
         .stat-card{background:#fff;border-radius:14px;padding:20px;display:flex;align-items:center;gap:14px;border:1px solid #e8e8e4;box-shadow:0 2px 8px rgba(0,0,0,.03);transition:box-shadow .2s}
         .stat-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07)}
         .stat-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0}
-<<<<<<< HEAD
         .si-blue{background:#eff6ff;color:#3b82f6}.si-green{background:#f0fdf4;color:#16a34a}.si-yellow{background:#fefce8;color:#ca8a04}.si-teal{background:#f0fdfa;color:#0d9488}
         .stat-info{display:flex;flex-direction:column;gap:3px}
         .stat-label{font-size:.78rem;color:#6b7280;font-weight:500}
         .stat-value{font-size:1.7rem;font-weight:700;color:var(--color-blue-deep);line-height:1}
         .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:22px}
-=======
-        .si-blue{background:#eff6ff;color:#3b82f6}.si-green{background:#f0fdf4;color:#16a34a}
-        .si-yellow{background:#fefce8;color:#ca8a04}.si-teal{background:#f0fdfa;color:#0d9488}
-        .stat-info{display:flex;flex-direction:column;gap:3px}
-        .stat-label{font-size:.78rem;color:#6b7280;font-weight:500}
-        .stat-value{font-size:1.7rem;font-weight:700;color:var(--color-blue-deep);line-height:1}
-        /* Two col */
-        .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:22px}
-        /* Content Card */
->>>>>>> upstream/main
         .cc{background:#fff;border-radius:14px;padding:26px;border:1px solid #e8e8e4;box-shadow:0 2px 8px rgba(0,0,0,.03);margin-bottom:22px}
         .cc-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid #f0ede8}
         .cc-title{font-family:var(--font-title);font-size:1.1rem;color:var(--color-blue-deep);font-weight:600}
         .badge-cnt{background:var(--color-gold);color:#fff;font-size:.68rem;padding:2px 8px;border-radius:20px;font-weight:600;margin-left:8px}
-        .view-all{background:none;border:none;color:var(--color-gold);font-size:.84rem;font-weight:600;cursor:pointer}
-<<<<<<< HEAD
-=======
-        /* Revenue summary bar */
->>>>>>> upstream/main
-        .rev-summary-bar{display:flex;align-items:center;background:#fff;border:1px solid #e8e8e4;border-radius:12px;padding:16px 24px;margin-bottom:20px;gap:0}
+        .view-all{background:none;border:none;color:var(--color-gold);font-size:.84rem;font-weight:600;cursor:pointer}        .rev-summary-bar{display:flex;align-items:center;background:#fff;border:1px solid #e8e8e4;border-radius:12px;padding:16px 24px;margin-bottom:20px;gap:0}
         .rsb-item{display:flex;flex-direction:column;gap:4px;flex:1;text-align:center}
         .rsb-sep{width:1px;height:36px;background:#e8e8e4;flex-shrink:0}
         .rsb-label{font-size:.72rem;color:#6b7280;font-weight:500}
         .rsb-val{font-size:1rem;font-weight:800}
         .rsb-green{color:#16a34a}.rsb-blue{color:#3b82f6}.rsb-orange{color:#ea580c}.rsb-gold{color:#b45309}
-<<<<<<< HEAD
-=======
-        /* Room mini grid */
->>>>>>> upstream/main
         .room-grid-mini{display:grid;grid-template-columns:repeat(9,1fr);gap:8px}
         .rgm-card{border-radius:8px;padding:8px 6px;text-align:center;border:1px solid;display:flex;flex-direction:column;align-items:center;gap:3px;transition:all .2s}
         .rgm-avail{background:#f0fdf4;border-color:#bbf7d0}.rgm-occ{background:#fef2f2;border-color:#fecaca}
@@ -1567,82 +823,41 @@ export default function OwnerDashboardPage() {
         .rgm-type{font-size:.55rem;color:#6b7280;text-transform:uppercase;letter-spacing:.5px}
         .rgm-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
         .dot-green{background:#16a34a}.dot-red{background:#ef4444}
-<<<<<<< HEAD
         .quick-item{display:flex;justify-content:space-between;align-items:flex-start;padding:14px;background:#fdf8ed;border:1px solid #f5e6c0;border-radius:10px;gap:12px}
-=======
-        /* Quick confirm item */
-        .quick-item{display:flex;justify-content:space-between;align-items:flex-start;padding:14px;background:#fdf8ed;border:1px solid #f5e6c0;border-radius:10px;gap:12px}
-        /* Revenue hero */
->>>>>>> upstream/main
         .rev-hero{background:linear-gradient(135deg,var(--color-blue-deep),#061924);color:#fff;padding:28px 32px;border-radius:16px;display:flex;align-items:center;justify-content:space-between;gap:24px;box-shadow:0 8px 32px rgba(10,37,64,.2);margin-bottom:24px;flex-wrap:wrap}
         .rev-pill{font-size:.74rem;font-weight:600;padding:5px 12px;border-radius:20px}
         .rp-green{background:rgba(22,163,74,.2);color:#4ade80}
         .rp-blue{background:rgba(59,130,246,.2);color:#93c5fd}
         .rp-orange{background:rgba(234,88,12,.2);color:#fdba74}
-        .rp-red{background:rgba(239,68,68,.2);color:#fca5a5}
-<<<<<<< HEAD
-=======
-        /* Pricing */
->>>>>>> upstream/main
-        .price-row{display:flex;justify-content:space-between;align-items:center;padding:18px;background:#f9f8f6;border:1px solid #e8e8e4;border-radius:10px;gap:16px;margin-bottom:16px}
+        .rp-red{background:rgba(239,68,68,.2);color:#fca5a5}        .price-row{display:flex;justify-content:space-between;align-items:center;padding:18px;background:#f9f8f6;border:1px solid #e8e8e4;border-radius:10px;gap:16px;margin-bottom:16px}
         .price-input-group{display:flex;align-items:center;background:#fff;border:1px solid #d1d5db;border-radius:8px;padding:0 10px;overflow:hidden}
         .currency-prefix{font-weight:600;color:#6b7280;font-size:.9rem;margin-right:4px}
         .price-input{border:none;padding:10px 8px;font-size:.95rem;font-weight:600;color:var(--color-blue-deep);width:120px;outline:none;text-align:right;background:transparent}
         .save-btn{display:inline-flex;align-items:center;gap:10px;padding:13px 26px;font-size:.93rem;font-weight:600;background:var(--color-gold);color:#fff;border:none;border-radius:10px;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(197,160,89,.3)}
         .save-btn:hover{background:#b8983d;transform:translateY(-1px)}
-<<<<<<< HEAD
-=======
-        /* Table */
->>>>>>> upstream/main
         .table-responsive{width:100%;overflow-x:auto;border-radius:8px}
         .dt{width:100%;border-collapse:collapse;font-size:.83rem;min-width:1000px}
         .dt th{background:#f9f8f6;color:#374151;font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;padding:10px 11px;text-align:left;border-bottom:2px solid #e8e8e4;white-space:nowrap}
         .dt td{padding:11px;border-bottom:1px solid #f0ede8;color:#374151;vertical-align:middle}
-        .dt tr:hover td{background:#fdf8ed}.dt tr:last-child td{border-bottom:none}
-<<<<<<< HEAD
-=======
-        /* Badges */
->>>>>>> upstream/main
-        .code-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,var(--color-blue-deep),#1a5276);color:var(--color-gold);padding:4px 9px;border-radius:6px;font-size:.7rem;font-weight:700;font-family:'Courier New',monospace;white-space:nowrap}
+        .dt tr:hover td{background:#fdf8ed}.dt tr:last-child td{border-bottom:none}        .code-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,var(--color-blue-deep),#1a5276);color:var(--color-gold);padding:4px 9px;border-radius:6px;font-size:.7rem;font-weight:700;font-family:'Courier New',monospace;white-space:nowrap}
         .room-num-badge{display:inline-block;background:#fdf8ed;color:#b45309;border:1px solid #f5e6c0;padding:2px 7px;border-radius:5px;font-size:.75rem;font-weight:700;font-family:'Courier New',monospace;margin-right:3px}
         .room-tag{background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe;padding:2px 8px;border-radius:5px;font-size:.72rem;font-weight:600;white-space:nowrap}
         .date-cell{white-space:nowrap;font-size:.81rem}
         .dur-badge{background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe;padding:2px 7px;border-radius:5px;font-size:.72rem;font-weight:600;white-space:nowrap}
-<<<<<<< HEAD
-=======
-        .drink-tag{background:#fff7ed;color:#ea580c;border:1px solid #fed7aa;padding:2px 7px;border-radius:5px;font-size:.7rem;font-weight:500;white-space:nowrap}
->>>>>>> upstream/main
         .pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:.68rem;font-weight:600;white-space:nowrap}
         .pill-g{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
         .pill-o{background:#fff7ed;color:#ea580c;border:1px solid #fed7aa}
         .pill-b{background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe}
-        .pill-r{background:#fef2f2;color:#ef4444;border:1px solid #fecaca}
-<<<<<<< HEAD
-=======
-        /* Action buttons */
->>>>>>> upstream/main
-        .btn-paid{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;font-size:.72rem;font-weight:600;color:#fff;background:linear-gradient(135deg,#16a34a,#15803d);border:none;border-radius:6px;cursor:pointer;transition:all .2s;white-space:nowrap}
+        .pill-r{background:#fef2f2;color:#ef4444;border:1px solid #fecaca}        .btn-paid{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;font-size:.72rem;font-weight:600;color:#fff;background:linear-gradient(135deg,#16a34a,#15803d);border:none;border-radius:6px;cursor:pointer;transition:all .2s;white-space:nowrap}
         .btn-paid:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(22,163,74,.3)}
         .btn-cancel{display:inline-flex;align-items:center;gap:4px;padding:5px 9px;font-size:.72rem;font-weight:600;color:#fff;background:linear-gradient(135deg,#ef4444,#dc2626);border:none;border-radius:6px;cursor:pointer;transition:all .2s}
         .btn-cancel:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(239,68,68,.3)}
-<<<<<<< HEAD
         .empty-state{padding:36px 20px;text-align:center;color:#9ca3af;background:#fafaf9;border-radius:10px;border:1px dashed #d1d5db}
         .set-row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid #f0ede8;font-size:.9rem}
         .set-row span:first-child{color:#6b7280}.set-row strong{color:var(--color-blue-deep)}
         .toast{position:fixed;top:22px;right:22px;background:rgba(10,37,64,.96);backdrop-filter:blur(10px);color:#fff;padding:13px 20px;border-radius:12px;border:1px solid var(--color-gold);box-shadow:0 8px 32px rgba(0,0,0,.2);display:flex;align-items:center;gap:10px;z-index:2000;font-size:.88rem;font-weight:500;animation:slideInR .3s both}
         .toast-err{border-color:#ef4444;background:rgba(127,29,29,.95)}
         @keyframes slideInR{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
-=======
-        /* Empty / Settings */
-        .empty-state{padding:36px 20px;text-align:center;color:#9ca3af;background:#fafaf9;border-radius:10px;border:1px dashed #d1d5db}
-        .set-row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid #f0ede8;font-size:.9rem}
-        .set-row span:first-child{color:#6b7280}.set-row strong{color:var(--color-blue-deep)}
-        /* Toast */
-        .toast{position:fixed;top:22px;right:22px;background:rgba(10,37,64,.96);backdrop-filter:blur(10px);color:#fff;padding:13px 20px;border-radius:12px;border:1px solid var(--color-gold);box-shadow:0 8px 32px rgba(0,0,0,.2);display:flex;align-items:center;gap:10px;z-index:2000;font-size:.88rem;font-weight:500;animation:slideInR .3s both}
-        .toast-err{border-color:#ef4444;background:rgba(127,29,29,.95)}
-        @keyframes slideInR{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
-        /* Responsive */
->>>>>>> upstream/main
         @media(max-width:1200px){.stats-grid{grid-template-columns:repeat(2,1fr)}.rev-cards-row{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}.room-grid-mini{grid-template-columns:repeat(6,1fr)}}
         @media(max-width:768px){.main-content{margin-left:0;width:100%}.cs{padding:20px 16px}.stats-grid{grid-template-columns:1fr 1fr}.rev-summary-bar{flex-direction:column;gap:12px}.rsb-sep{display:none}.room-grid-mini{grid-template-columns:repeat(4,1fr)}}
       `}</style>

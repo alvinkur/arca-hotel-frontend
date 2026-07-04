@@ -3,38 +3,22 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { FaBars, FaTimes, FaConciergeBell } from 'react-icons/fa';
-<<<<<<< HEAD
 import { clearAuth } from '../services/api';
-=======
->>>>>>> upstream/main
 
-// Component: Navbar
 export default function Navbar({ onBookingClick }) {
-  // useState() - Menyimpan status buka/tutup menu navigasi mobile
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
-  // useState() - Menyimpan status apakah halaman telah di-scroll ke bawah
   const [isScrolled, setIsScrolled] = useState(false);
-
-  // useState() - Menyimpan user yang sedang login saat ini
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Load user session
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const userStr = localStorage.getItem('currentUser');
-      if (userStr) {
-        setCurrentUser(JSON.parse(userStr));
-      }
+    const userStr = typeof window !== 'undefined' ? localStorage.getItem('currentUser') : null;
+    if (userStr) {
+      try { setCurrentUser(JSON.parse(userStr)); } catch (e) {}
     }
   }, []);
 
   const handleLogout = () => {
-<<<<<<< HEAD
     clearAuth();
-=======
-    localStorage.removeItem('currentUser');
->>>>>>> upstream/main
     setCurrentUser(null);
     window.location.href = '/';
   };

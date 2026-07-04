@@ -3,12 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-<<<<<<< HEAD
 import { FaEnvelope, FaLock, FaArrowLeft, FaExclamationCircle } from 'react-icons/fa';
 import { login, setAuthToken } from '../../../services/api';
-=======
-import { FaEnvelope, FaLock, FaArrowLeft, FaConciergeBell, FaExclamationCircle } from 'react-icons/fa';
->>>>>>> upstream/main
 
 export default function StaffLoginPage() {
   const router = useRouter();
@@ -18,10 +14,7 @@ export default function StaffLoginPage() {
   });
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
-<<<<<<< HEAD
   const [isLoading, setIsLoading] = useState(false);
-=======
->>>>>>> upstream/main
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,7 +22,6 @@ export default function StaffLoginPage() {
     if (errorMsg) setErrorMsg('');
   };
 
-<<<<<<< HEAD
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMsg('');
@@ -48,52 +40,22 @@ export default function StaffLoginPage() {
       const data = await login(email, password, 'staff');
       setAuthToken(data.token);
       localStorage.setItem('currentUser', JSON.stringify(data.user));
-      setSuccessMsg('Otorisasi Staff Berhasil! Mengalihkan...');
+      setSuccessMsg(`Selamat datang, ${data.user.name}!`);
       setTimeout(() => router.push('/staff'), 1000);
     } catch (err) {
       const apiError = err.response?.data?.error;
-      setErrorMsg(apiError || 'Kredensial Staff salah atau tidak terdaftar.');
+      setErrorMsg(apiError || 'Email atau password salah.');
     } finally {
       setIsLoading(false);
-=======
-  const handleLogin = (e) => {
-    e.preventDefault();
-    setErrorMsg('');
-    setSuccessMsg('');
-
-    const { email, password } = formData;
-
-    if (!email || !password) {
-      setErrorMsg('Email dan Password wajib diisi.');
-      return;
-    }
-
-    if (email === 'staff@arca.com' && password === 'staff123') {
-      const staffUser = { name: 'Hotel Staff', email: 'staff@arca.com', role: 'staff' };
-      localStorage.setItem('currentUser', JSON.stringify(staffUser));
-      setSuccessMsg('Otorisasi Staff Berhasil! Mengalihkan...');
-      setTimeout(() => router.push('/staff'), 1000);
-    } else {
-      setErrorMsg('Kredensial Staff salah atau tidak terdaftar.');
->>>>>>> upstream/main
     }
   };
 
   return (
     <div className="auth-page">
-      <div className="auth-card">
-<<<<<<< HEAD
-=======
-        {/* Back button */}
->>>>>>> upstream/main
-        <Link href="/" className="auth-back-btn">
+      <div className="auth-card">        <Link href="/" className="auth-back-btn">
           <FaArrowLeft /> Back to Home
         </Link>
 
-<<<<<<< HEAD
-=======
-        {/* Brand Logo */}
->>>>>>> upstream/main
         <div className="auth-brand">
           <img src="/assets/logo.png" alt="Hotel Arca" className="auth-logo-img" />
           <div className="auth-brand-text">
@@ -103,11 +65,6 @@ export default function StaffLoginPage() {
           </div>
           <p>Staff Portal</p>
         </div>
-
-<<<<<<< HEAD
-=======
-        {/* Alert Messages */}
->>>>>>> upstream/main
         {errorMsg && (
           <div className="auth-alert alert-danger">
             <FaExclamationCircle /> <span>{errorMsg}</span>
@@ -119,22 +76,13 @@ export default function StaffLoginPage() {
           </div>
         )}
 
-<<<<<<< HEAD
-=======
-        {/* Form */}
->>>>>>> upstream/main
         <form onSubmit={handleLogin} className="auth-form" noValidate>
           <div className="auth-group">
             <label htmlFor="email">Alamat Email Staff</label>
             <div className="auth-input-wrapper">
               <FaEnvelope className="auth-input-icon" />
-<<<<<<< HEAD
               <input
                 type="email"
-=======
-              <input 
-                type="email" 
->>>>>>> upstream/main
                 id="email"
                 name="email"
                 value={formData.email}
@@ -149,13 +97,8 @@ export default function StaffLoginPage() {
             <label htmlFor="password">Password</label>
             <div className="auth-input-wrapper">
               <FaLock className="auth-input-icon" />
-<<<<<<< HEAD
               <input
                 type="password"
-=======
-              <input 
-                type="password" 
->>>>>>> upstream/main
                 id="password"
                 name="password"
                 value={formData.password}
@@ -166,7 +109,6 @@ export default function StaffLoginPage() {
             </div>
           </div>
 
-<<<<<<< HEAD
           <button type="submit" className="btn-gold auth-submit-btn" disabled={isLoading}>
             {isLoading ? 'Memproses...' : 'Masuk Sebagai Staff'}
           </button>
@@ -176,18 +118,6 @@ export default function StaffLoginPage() {
           <p className="hint-title">DEMO ACCOUNT INFO:</p>
           <p><strong>Email:</strong> staff@arca.com</p>
           <p><strong>Password:</strong> password123</p>
-=======
-          <button type="submit" className="btn-gold auth-submit-btn">
-            Masuk Sebagai Staff
-          </button>
-        </form>
-
-        {/* Hints Box for Demo */}
-        <div className="auth-hints">
-          <p className="hint-title">DEMO ACCOUNT INFO:</p>
-          <p><strong>Email:</strong> staff@arca.com</p>
-          <p><strong>Password:</strong> staff123</p>
->>>>>>> upstream/main
         </div>
       </div>
 
@@ -365,14 +295,11 @@ export default function StaffLoginPage() {
           width: 100%;
         }
 
-<<<<<<< HEAD
         .auth-submit-btn:disabled {
           opacity: 0.6;
           cursor: not-allowed;
         }
 
-=======
->>>>>>> upstream/main
         .auth-hints {
           margin-top: 24px;
           padding: 12px;
